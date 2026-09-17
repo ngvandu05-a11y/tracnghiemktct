@@ -231,6 +231,26 @@
             color: var(--gold-accent);
         }
 
+        .timer-wrap {
+             display: flex;
+             justify-content: center;
+             margin-bottom: 25px;
+        }
+        .timer-circle {
+             width: 96px; height: 96px; border-radius: 50%; position: relative;
+             display: flex; align-items: center; justify-content: center;
+             background: conic-gradient(var(--gold-accent) 360deg, #334155 0deg);
+             box-shadow: 0 0 18px rgba(245, 158, 11, 0.25);
+        }
+        .timer-circle::before {
+             content: ""; position: absolute; inset: 7px; border-radius: 50%;
+             background: var(--navy-card);
+        }
+        .timer-number {
+             position: relative; z-index: 1; font-size: 1.7rem; font-weight: 800;
+             color: var(--gold-accent); font-variant-numeric: tabular-nums;
+        }
+
         .question-text {
             font-size: 1.25rem;
             line-height: 1.6;
@@ -510,7 +530,13 @@
                 <div class="score-display">Điểm số: <span id="current-score">0</span> / 15</div>
             </div>
 
-            <div class="question-text" id="question-text">
+            <div class="timer-wrap">
+                 <div class="timer-circle" id="timer-circle">
+                     <span class="timer-number" id="timer-number">30</span>
+                 </div>
+             </div>
+
+             <div class="question-text" id="question-text">
                 Đang tải câu hỏi...
             </div>
 
@@ -620,6 +646,8 @@
         let thoiGianLamBaiStr = "";
         let viPhamStatus = "Không vi phạm";
         let warningCount = 0;
+        let timerInterval = null;
+        let timeRemaining = 30;
 
         // Xử lý kiểm soát vi phạm khi rời màn hình / đổi tab
         document.addEventListener("visibilitychange", function() {
@@ -663,27 +691,65 @@
             loadQuestion();
         }
 
+        function startTimer() {
+             clearInterval(timerInterval);
+             timeRemaining = 30;
+             updateTimerDisplay();
+             timerInterval = setInterval(() => {
+                 timeRemaining--;
+                 updateTimerDisplay();
+                 if (timeRemaining <= 0) {
+                     clearInterval(timerInterval);
+                     if (!isAnswered) {
+                         recordTimeout();
+                         nextQuestion();
+                     }
+                 }
+             }, 1000);
+        }
+
+        function updateTimerDisplay() {
+             const degrees = (timeRemaining / 30) * 360;
+             document.getElementById('timer-number').innerText = Math.max(0, timeRemaining);
+             document.getElementById('timer-circle').style.background =
+                 `conic-gradient(var(--gold-accent) ${degrees}deg, #334155 ${degrees}deg)`;
+        }
+
+        function recordTimeout() {
+             const qData = quizData[currentQuestionIndex];
+             userHistory.push({
+                 cauSo: currentQuestionIndex + 1,
+                 noiDungCauHoi: qData.q,
+                 dapAnThiSinh: "Không trả lời (hết thời gian)",
+                 dapAnDung: qData.correct + ". " + qData.options[qData.correct],
+                 ketQua: "Sai"
+             });
+        }
+
         function loadQuestion() {
-            isAnswered = false;
-            const qData = quizData[currentQuestionIndex];
-            document.getElementById('question-counter').innerText = `Câu hỏi ${currentQuestionIndex + 1} / ${quizData.length}`;
-            document.getElementById('current-score').innerText = score;
-            document.getElementById('question-text').innerText = qData.q;
-            document.getElementById('feedback-container').style.display = 'none';
+             isAnswered = false;
+             const qData = quizData[currentQuestionIndex];
+             document.getElementById('question-counter').innerText = `Câu hỏi ${currentQuestionIndex + 1} / ${quizData.length}`;
+             document.getElementById('current-score').innerText = score;
+             document.getElementById('question-text').innerText = qData.q;
+             document.getElementById('feedback-container').style.display = 'none';
 
-            const optionsList = document.getElementById('options-list');
-            optionsList.innerHTML = '';
+             const optionsList = document.getElementById('options-list');
+             optionsList.innerHTML = '';
 
-            for (let key in qData.options) {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerHTML = `<span class="opt-label">${key}.</span> <span>${qData.options[key]}</span>`;
-                btn.onclick = () => selectAnswer(key, btn);
-                optionsList.appendChild(btn);
-            }
+             for (let key in qData.options) {
+                 const btn = document.createElement('button');
+                 btn.className = 'option-btn';
+                 btn.innerHTML = `<span class="opt-label">${key}.</span> <span>${qData.options[key]}</span>`;
+                 btn.onclick = () => selectAnswer(key, btn);
+                 optionsList.appendChild(btn);
+             }
+
+             startTimer();
         }
 
         function selectAnswer(selectedKey, selectedBtn) {
+             clearInterval(timerInterval);
             if (isAnswered) return;
             isAnswered = true;
 
@@ -757,6 +823,7 @@
         }
 
         function nextQuestion() {
+             clearInterval(timerInterval);
             currentQuestionIndex++;
             if (currentQuestionIndex < quizData.length) {
                 loadQuestion();
@@ -766,6 +833,7 @@
         }
 
         function showResults() {
+             clearInterval(timerInterval);
             document.getElementById('quiz-screen').classList.remove('active');
             document.getElementById('result-screen').classList.add('active');
 
@@ -826,6 +894,7 @@
         }
 
         function restartQuiz() {
+             clearInterval(timerInterval);
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('start-screen').classList.add('active');
             document.getElementById('player-name').value = '';
