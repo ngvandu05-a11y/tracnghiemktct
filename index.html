@@ -3,1784 +3,1368 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Ôn tập Kinh tế Chính trị Mác - Lênin</title>
+    <title>Hệ Thống Lập Chứng Từ Kế Toán | Công ty TNHH Thời trang DB</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- html-docx-js for Word Export -->
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #1e3a8a;
-            --primary-light: #3b82f6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #cbd5e1;
-            --radius: 12px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--background);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-        }
-
-        /* Watermark Style */
-        #watermark-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 9999;
-            display: flex;
-            flex-wrap: wrap;
-            overflow: hidden;
-            opacity: 0.08;
-        }
-
-        .watermark-text {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
-            transform: rotate(-30deg);
-            white-space: nowrap;
-            margin: 4rem;
-            user-select: none;
-        }
-
-        header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: var(--shadow);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        header h1 {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .nav-btn:hover, .nav-btn.active {
-            background: white;
-            color: var(--primary);
-        }
-
-        main {
-            flex: 1;
-            max-width: 900px;
-            width: 100%;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 2rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 1.5rem;
-        }
-
-        /* Home View Styles */
-        .home-container {
-            text-align: center;
-            padding: 2rem 0;
-        }
-
-        .home-container h2 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-size: 1.75rem;
-        }
-
-        .home-container p {
-            color: var(--text-light);
-            margin-bottom: 2rem;
-            font-size: 1.05rem;
-        }
-
-        .mode-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .mode-card {
-            background: var(--surface);
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .mode-card:hover {
-            border-color: var(--primary-light);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
-        }
-
-        .mode-card h3 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .mode-card p {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-bottom: 0;
-        }
-
-        /* Modal / Name Input Screen */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            padding: 1rem;
-        }
-
-        .modal-card {
-            background: var(--surface);
-            padding: 2.5rem;
-            border-radius: var(--radius);
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-
-        .modal-card h3 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .modal-card p {
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .modal-input:focus {
-            border-color: var(--primary-light);
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-
-        /* Quiz / Practice View Styles */
-        .quiz-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
-        }
-
-        .timer {
-            font-weight: 600;
-            color: var(--danger);
-            background: #fee2e2;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-        }
-
-        .question-box {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: var(--text);
-            line-height: 1.5;
-        }
-
-        .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-        }
-
-        .option-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 1rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: var(--surface);
-        }
-
-        .option-item:hover {
-            background: #f1f5f9;
-            border-color: var(--primary-light);
-        }
-
-        .option-item input[type="radio"] {
-            margin-top: 0.2rem;
-            cursor: pointer;
-        }
-
-        .option-item.correct {
-            background: #d1fae5;
-            border-color: var(--success);
-            color: #065f46;
-        }
-
-        .option-item.incorrect {
-            background: #fee2e2;
-            border-color: var(--danger);
-            color: #991b1b;
-        }
-
-        .quiz-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background: var(--primary-light);
-        }
-
-        .btn-secondary {
-            background: #64748b;
-        }
-
-        .btn-secondary:hover {
-            background: #475569;
-        }
-
-        /* Result View */
-        .result-summary {
-            text-align: center;
-            padding: 2rem 0;
-        }
-
-        .score-circle {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0 auto 1.5rem auto;
-            box-shadow: var(--shadow);
-            line-height: 1.2;
-        }
-
-        .score-circle span {
-            font-size: 1rem;
-            font-weight: 400;
-            opacity: 0.9;
-        }
-
-        /* History Table & Result Details */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            background: #f1f5f9;
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .detail-item {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-
-        .detail-item.is-correct {
-            border-left: 5px solid var(--success);
-        }
-
-        .detail-item.is-incorrect {
-            border-left: 5px solid var(--danger);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        footer {
-            text-align: center;
-            padding: 1rem;
-            color: var(--text-light);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border);
-            background: var(--surface);
-        }
-
-        @media (max-width: 600px) {
-            header {
-                flex-direction: column;
-                align-items: stretch;
+        body { font-family: 'Inter', sans-serif; }
+        
+        @media print {
+            body * {
+                visibility: hidden;
             }
-            .nav-buttons {
-                justify-content: center;
+            .printable-area, .printable-area * {
+                visibility: visible;
             }
-            .card {
-                padding: 1rem;
+            .printable-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 10mm;
+                background: white !important;
+                box-shadow: none !important;
             }
+            .no-print {
+                display: none !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 10mm 15mm;
+            }
+        }
+
+        .voucher-font {
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .tab-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
-    <div id="watermark-container"></div>
-
-    <!-- Giao diện nhập tên tùy chỉnh (Modal) -->
-    <div id="name-modal" class="modal-overlay hidden">
-        <div class="modal-card">
-            <h3>Xác nhận thông tin</h3>
-            <p>Vui lòng nhập Họ và tên của bạn để bắt đầu làm bài hệ thống:</p>
-            <input type="text" id="student-name-input" class="modal-input" placeholder="Ví dụ: Nguyễn Văn A">
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeNameModal()">Hủy</button>
-                <button class="btn" onclick="confirmStartQuiz()">Bắt đầu</button>
+    <!-- HEADER CHUNG -->
+    <header class="bg-indigo-900 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3 mb-3 md:mb-0 cursor-pointer" onclick="switchView('home')">
+                <div class="bg-gradient-to-br from-amber-400 to-amber-600 p-2.5 rounded-xl text-indigo-950 text-xl font-bold shadow-md">
+                    <i class="fa-solid fa-vault"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Công ty TNHH Thời trang DB</h1>
+                    <p class="text-xs text-indigo-200">Hệ thống Chứng từ Kế toán (Theo Thông tư 99/2025/TT-BTC)</p>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Giao diện xác nhận nộp bài tùy chỉnh (Modal) -->
-    <div id="submit-confirm-modal" class="modal-overlay hidden">
-        <div class="modal-card">
-            <h3>Xác nhận nộp bài</h3>
-            <p>Bạn có chắc chắn muốn nộp bài không?</p>
-            <div class="modal-actions" style="justify-content: center;">
-                <button class="btn btn-secondary" onclick="closeSubmitConfirmModal()">Hủy</button>
-                <button class="btn" onclick="acceptSubmitQuiz()">Đồng ý nộp</button>
+            
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="switchView('home')" id="nav-btn-home" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-800 text-white hover:bg-indigo-700 transition flex items-center shadow-inner">
+                    <i class="fa-solid fa-house mr-1.5"></i> Trang Chủ
+                </button>
+                <button onclick="switchView('thu')" id="nav-btn-thu" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-950 text-emerald-300 hover:bg-indigo-850 transition flex items-center border border-indigo-700">
+                    <i class="fa-solid fa-file-invoice-dollar mr-1.5"></i> Phiếu Thu
+                </button>
+                <button onclick="switchView('chi')" id="nav-btn-chi" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-950 text-amber-300 hover:bg-indigo-850 transition flex items-center border border-indigo-700">
+                    <i class="fa-solid fa-receipt mr-1.5"></i> Phiếu Chi
+                </button>
+                <button onclick="switchView('nhapkho')" id="nav-btn-nhapkho" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-950 text-cyan-300 hover:bg-indigo-850 transition flex items-center border border-indigo-700">
+                    <i class="fa-solid fa-boxes-packing mr-1.5"></i> Nhập Kho
+                </button>
+                <button onclick="switchView('xuatkho')" id="nav-btn-xuatkho" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-950 text-purple-300 hover:bg-indigo-850 transition flex items-center border border-indigo-700">
+                    <i class="fa-solid fa-truck-ramp-box mr-1.5"></i> Xuất Kho
+                </button>
             </div>
-        </div>
-    </div>
-
-    <header>
-        <h1>ÔN TẬP KTCT Mác - Lênin</h1>
-        <div class="nav-buttons">
-            <button class="nav-btn active" onclick="switchView('home')">Trang chủ</button>
-            <button class="nav-btn" onclick="switchView('history')">Lịch sử</button>
         </div>
     </header>
 
-    <main>
-        <!-- Home View -->
-        <div id="home-view" class="card home-container">
-            <h2>HỆ THỐNG ÔN THI GIỮA HỌC KỲ</h2>
-            <p>Môn <b>Kinh tế chính trị Mác - Lênin</b></p>
-            
-            <div class="mode-grid">
-                <div class="mode-card" onclick="openNameModal('exam')">
-                    <h3>Thi thử</h3>
-                    <p>50 câu hỏi, thời gian 60 phút.</p>
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- ================= VIEW 1: TRANG CHỦ / DASHBOARD LỰA CHỌN ================= -->
+        <div id="view-home" class="space-y-6 tab-transition">
+            <!-- Banner Chào mừng -->
+            <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-blue-900 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                    <i class="fa-solid fa-coins"></i>
                 </div>
-                <div class="mode-card" onclick="openNameModal('practice')">
-                    <h3>Luyện tập</h3>
-                    <p>50 câu hỏi</p>
+                <div class="relative z-10 max-w-2xl mb-6 md:mb-0">
+                    <span class="bg-indigo-700/80 text-amber-300 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-indigo-600">
+                        <i class="fa-solid fa-shield-halved mr-1"></i> Chuẩn Thông tư 99/2025/TT-BTC
+                    </span>
+                    <h2 class="text-2xl md:text-4xl font-extrabold mt-3 tracking-tight">HỆ THỐNG LẬP CHỨNG TỪ KẾ TOÁN</h2>
+                    <p class="text-indigo-200 text-sm md:text-base mt-2 leading-relaxed">
+                        Phần mềm hỗ trợ tạo lập chứng từ Thu, Chi, Nhập kho và Xuất kho chuyên nghiệp. Tự động đọc số tiền thành chữ, tính toán thành tiền chi tiết, hỗ trợ xuất file Excel, Word và in ấn chuẩn A4.
+                    </p>
                 </div>
-                <div class="mode-card" onclick="openNameModal('wrong')">
-                    <h3>Ôn tập câu sai</h3>
-                    <p id="wrong-count-text">Ôn luyện lại các câu hỏi đã làm sai trong các phiên trước để nắm vững kiến thức.</p>
+                <div class="relative z-10 grid grid-cols-2 gap-3">
+                    <button onclick="switchView('thu')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-3 rounded-2xl shadow-lg transition flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-circle-plus mr-1.5"></i> Lập Phiếu Thu
+                    </button>
+                    <button onclick="switchView('chi')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-3 rounded-2xl shadow-lg transition flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-circle-minus mr-1.5"></i> Lập Phiếu Chi
+                    </button>
+                    <button onclick="switchView('nhapkho')" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-4 py-3 rounded-2xl shadow-lg transition flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-box-arrow-down mr-1.5"></i> Lập Nhập Kho
+                    </button>
+                    <button onclick="switchView('xuatkho')" class="bg-purple-500 hover:bg-purple-600 text-slate-950 font-bold px-4 py-3 rounded-2xl shadow-lg transition flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-box-arrow-up mr-1.5"></i> Lập Xuất Kho
+                    </button>
                 </div>
-                <!-- Bổ sung thêm các lựa chọn theo Chương và số lượng câu ngẫu nhiên -->
-                <div class="mode-card" onclick="openNameModal('chapter1')">
-                    <h3>Chương 1</h3>
-                    <p>Ôn tập chuyên sâu toàn bộ câu hỏi thuộc Chương 1.</p>
+            </div>
+
+            <!-- Thẻ Thống kê nhanh -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div onclick="switchView('thu')" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 cursor-pointer hover:border-emerald-400 hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Mẫu Phiếu Thu</p>
+                            <h3 class="text-xl font-bold text-emerald-600 mt-1">Mẫu 01-TT</h3>
+                        </div>
+                        <div class="bg-emerald-50 text-emerald-600 p-3 rounded-xl text-xl">
+                            <i class="fa-solid fa-file-arrow-down"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Thu tiền mặt vào quỹ công ty</p>
                 </div>
-                <div class="mode-card" onclick="openNameModal('chapter2')">
-                    <h3>Chương 2</h3>
-                    <p>Ôn tập chuyên sâu toàn bộ câu hỏi thuộc Chương 2.</p>
+
+                <div onclick="switchView('chi')" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 cursor-pointer hover:border-amber-400 hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Mẫu Phiếu Chi</p>
+                            <h3 class="text-xl font-bold text-amber-600 mt-1">Mẫu 02-TT</h3>
+                        </div>
+                        <div class="bg-amber-50 text-amber-600 p-3 rounded-xl text-xl">
+                            <i class="fa-solid fa-file-arrow-up"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Chi tiền mặt từ quỹ công ty</p>
                 </div>
-                <div class="mode-card" onclick="openNameModal('chapter3')">
-                    <h3>Chương 3</h3>
-                    <p>Ôn tập chuyên sâu toàn bộ câu hỏi thuộc Chương 3.</p>
+
+                <div onclick="switchView('nhapkho')" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 cursor-pointer hover:border-cyan-400 hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Phiếu Nhập Kho</p>
+                            <h3 class="text-xl font-bold text-cyan-600 mt-1">Mẫu 01-VT</h3>
+                        </div>
+                        <div class="bg-cyan-50 text-cyan-600 p-3 rounded-xl text-xl">
+                            <i class="fa-solid fa-boxes-packing"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Nhập kho nguyên vật liệu, hàng hóa</p>
                 </div>
-                <div class="mode-card" onclick="openNameModal('random20')">
-                    <h3>20 câu ngẫu nhiên</h3>
-                    <p>Lấy ngẫu nhiên 20 câu từ cả 3 chương để ôn tập nhanh.</p>
+
+                <div onclick="switchView('xuatkho')" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 cursor-pointer hover:border-purple-400 hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Phiếu Xuất Kho</p>
+                            <h3 class="text-xl font-bold text-purple-600 mt-1">Mẫu 02-VT</h3>
+                        </div>
+                        <div class="bg-purple-50 text-purple-600 p-3 rounded-xl text-xl">
+                            <i class="fa-solid fa-truck-ramp-box"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Xuất kho hàng hóa, thành phẩm</p>
                 </div>
-                <div class="mode-card" onclick="openNameModal('random30')">
-                    <h3>30 câu ngẫu nhiên</h3>
-                    <p>Lấy ngẫu nhiên 20 câu từ cả 3 chương để ôn tập nhanh.</p>
+            </div>
+
+            <!-- Lựa chọn tính năng chi tiết -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                <!-- Card Thu - Chi -->
+                <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="bg-emerald-100 text-emerald-700 p-3 rounded-2xl text-xl">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900">Nghiệp vụ Quỹ Tiền Mặt</h3>
+                                <p class="text-xs text-slate-500">Quản lý thu chi tiền mặt theo Thông tư 99/2025/TT-BTC</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-600 text-xs leading-relaxed">
+                            Lập phiếu thu tiền bán hàng, thu hồi công nợ hoặc lập phiếu chi tạm ứng, thanh toán chi phí vận hành với đầy đủ chữ ký giám đốc, kế toán trưởng, thủ quỹ, người nộp/nhận tiền.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-6">
+                        <button onclick="switchView('thu')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-3 rounded-xl text-xs transition flex items-center justify-center">
+                            <i class="fa-solid fa-file-arrow-down mr-1.5"></i> Lập Phiếu Thu
+                        </button>
+                        <button onclick="switchView('chi')" class="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2.5 px-3 rounded-xl text-xs transition flex items-center justify-center">
+                            <i class="fa-solid fa-file-arrow-up mr-1.5"></i> Lập Phiếu Chi
+                        </button>
+                    </div>
                 </div>
-                <div class="mode-card" onclick="openNameModal('random50')">
-                    <h3>50 câu ngẫu nhiên</h3>
-                    <p>Lấy ngẫu nhiên 50 câu từ cả 3 chương để ôn tập nhanh.</p>
+
+                <!-- Card Kho Vật Tư -->
+                <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="bg-cyan-100 text-cyan-700 p-3 rounded-2xl text-xl">
+                                <i class="fa-solid fa-warehouse"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900">Nghiệp vụ Kho Hàng & Vật Tư</h3>
+                                <p class="text-xs text-slate-500">Quản lý nhập xuất kho theo Thông tư 99/2025/TT-BTC</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-600 text-xs leading-relaxed">
+                            Lập phiếu nhập kho nguyên phụ liệu thời trang từ nhà cung cấp hoặc phiếu xuất kho vải, phụ kiện cho xưởng sản xuất, bao gồm bảng chi tiết danh mục hàng hóa, số lượng, đơn giá và thành tiền tự động.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-6">
+                        <button onclick="switchView('nhapkho')" class="bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 px-3 rounded-xl text-xs transition flex items-center justify-center">
+                            <i class="fa-solid fa-box-arrow-down mr-1.5"></i> Nhập Kho (01-VT)
+                        </button>
+                        <button onclick="switchView('xuatkho')" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 px-3 rounded-xl text-xs transition flex items-center justify-center">
+                            <i class="fa-solid fa-box-arrow-up mr-1.5"></i> Xuất Kho (02-VT)
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quiz / Practice / Exam View -->
-        <div id="quiz-view" class="card hidden">
-            <div class="quiz-header">
-                <span id="quiz-progress" style="font-weight: 600; color: var(--text-light);">Câu 1 / 50</span>
-                <span id="timer" class="timer hidden">60:00</span>
+        <!-- ================= VIEW 2: FORM PHIẾU THU (MẪU 01-TT) ================= -->
+        <div id="view-thu" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 tab-transition">
+            <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 no-print flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="switchView('home')" class="text-slate-400 hover:text-slate-700 text-sm mr-1"><i class="fa-solid fa-arrow-left"></i></button>
+                            <h2 class="text-lg font-bold text-emerald-800 flex items-center">
+                                <i class="fa-solid fa-file-arrow-down mr-2"></i> Phiếu Thu (Mẫu 01-TT)
+                            </h2>
+                        </div>
+                        <button type="button" onclick="resetFormThu()" class="text-xs text-rose-600 hover:text-rose-800 font-medium bg-rose-50 px-2.5 py-1 rounded-md transition">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Làm mới
+                        </button>
+                    </div>
+
+                    <form id="form-thu-data" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Số Phiếu Thu</label>
+                                <input type="text" id="thu-so-phieu" value="PT001" oninput="updatePreviewThu()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Ngày Lập</label>
+                                <input type="date" id="thu-ngay-lap" onchange="updatePreviewThu()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tài Khoản Nợ</label>
+                                <input type="text" id="thu-tk-no" value="1111" oninput="updatePreviewThu()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tài Khoản Có</label>
+                                <input type="text" id="thu-tk-co" value="131" oninput="updatePreviewThu()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Họ tên người nộp tiền</label>
+                            <input type="text" id="thu-nguoi-nop" value="Trần Văn Minh" oninput="updatePreviewThu()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Địa chỉ / Đơn vị</label>
+                            <input type="text" id="thu-dia-chi" value="Chi nhánh Quận 1 - Công ty TNHH Thời trang DB" oninput="updatePreviewThu()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Lý do nộp tiền</label>
+                            <textarea id="thu-ly-do" rows="2" oninput="updatePreviewThu()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">Thu tiền bán hàng hóa thời trang đơn hàng tháng này</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Số Tiền (VNĐ)</label>
+                            <input type="text" id="thu-so-tien" value="5.200.000" oninput="formatAndConvertMoneyThu()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg font-semibold text-emerald-700">
+                            <p class="text-xs text-slate-500 mt-1 italic" id="thu-so-tien-chu-preview">Bằng chữ: Năm triệu, hai trăm nghìn đồng chẵn.</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Kèm theo chứng từ gốc</label>
+                            <input type="text" id="thu-chung-tu" value="01 phiếu giao hàng kiêm biên bản thanh lý" oninput="updatePreviewThu()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div class="border-t border-slate-100 pt-3 mt-4">
+                            <p class="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Thông tin Chữ ký</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Người lập</label><input type="text" id="thu-sig-lap" value="Lê Thị Ngọc Hân" oninput="updatePreviewThu()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Kế toán trưởng</label><input type="text" id="thu-sig-ketoan" value="Nguyễn Văn Đủ" oninput="updatePreviewThu()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Thủ quỹ</label><input type="text" id="thu-sig-thuquy" value="Đoàn Bảo Bình" oninput="updatePreviewThu()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Giám đốc</label><input type="text" id="thu-sig-giamdoc" value="Đặng Khánh Huyền" oninput="updatePreviewThu()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-200 grid grid-cols-2 gap-2">
+                    <button type="button" onclick="exportExcelThu()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center"><i class="fa-solid fa-file-excel mr-1.5"></i> Xuất Excel</button>
+                    <button type="button" onclick="exportWordThu()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center"><i class="fa-solid fa-file-word mr-1.5"></i> Xuất Word</button>
+                    <button type="button" onclick="printVoucher('printable-voucher-thu')" class="col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-3 px-3 rounded-lg shadow-md transition flex items-center justify-center"><i class="fa-solid fa-print mr-2"></i> In Phiếu Thu (A4)</button>
+                </div>
             </div>
-            <div id="question-container" class="question-box"></div>
-            <div id="options-container" class="options-list"></div>
-            <div class="quiz-footer">
-                <button id="prev-btn" class="btn btn-secondary" onclick="prevQuestion()">Câu trước</button>
-                <button id="next-btn" class="btn" onclick="nextQuestion()">Câu sau</button>
+
+            <!-- Preview Phiếu Thu -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col items-center overflow-x-auto">
+                <div class="w-full flex justify-between items-center mb-4 no-print border-b border-slate-100 pb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-900 bg-emerald-50 px-3 py-1 rounded-full"><i class="fa-solid fa-eye mr-1"></i> Xem trước Mẫu 01-TT</span>
+                    <button onclick="switchView('home')" class="text-xs text-indigo-600 hover:underline font-medium"><i class="fa-solid fa-house mr-1"></i> Về Trang chủ</button>
+                </div>
+                <div id="printable-voucher-thu" class="printable-area voucher-font bg-white text-black w-full max-w-[210mm] p-6 text-[13px] leading-relaxed border border-slate-200 shadow-md rounded-lg relative">
+                    <table class="w-full mb-3">
+                        <tr>
+                            <td class="align-top w-[55%] whitespace-nowrap">
+                                <div class="font-bold uppercase text-[12px]">Đơn vị: Công ty TNHH Thời trang DB</div>
+                                <div class="text-[10px]">Địa chỉ: Số 125 Nguyễn Văn Linh, Phường Tân Thuận, TP. Hồ Chí Minh</div>
+                            </td>
+                            <td class="align-top text-right w-[45%]">
+                                <div class="font-bold text-[12px]">Mẫu số 01 - TT</div>
+                                <div class="text-[10px] italic">(Kèm theo Thông tư số 99/2025/TT-BTC)</div>
+                                <div class="text-xs space-y-1 inline-block text-left pr-4 mt-2">
+                                    <div>Số: <span id="prev-thu-so" class="font-bold underline px-1">PT001</span></div>
+                                    <div>Nợ: <span id="prev-thu-no" class="font-bold underline px-1">1111</span> | Có: <span id="prev-thu-co" class="font-bold underline px-1">131</span></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="text-center my-3">
+                        <h2 class="text-xl font-bold uppercase tracking-wide">PHIẾU THU</h2>
+                        <div id="prev-thu-ngaythang" class="text-xs italic">Ngày ...... tháng ...... năm 20...</div>
+                    </div>
+                    <div class="space-y-2.5 mb-5 text-[13px] mt-4">
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Họ tên người nộp:</span><span id="prev-thu-nguoinop" class="font-bold border-b border-dotted border-black flex-grow pl-1">Trần Văn Minh</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Địa chỉ:</span><span id="prev-thu-diachi" class="border-b border-dotted border-black flex-grow pl-1">Chi nhánh Quận 1</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Lý do nộp:</span><span id="prev-thu-lydo" class="border-b border-dotted border-black flex-grow pl-1">Thu tiền bán hàng</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Số tiền:</span><span id="prev-thu-sotien" class="font-bold border-b border-dotted border-black flex-grow pl-1">5.200.000 VNĐ</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Viết bằng chữ:</span><span id="prev-thu-sotienchu" class="italic border-b border-dotted border-black flex-grow pl-1">Năm triệu, hai trăm nghìn đồng chẵn.</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Chứng từ gốc kèm theo:</span><span id="prev-thu-chungtu" class="border-b border-dotted border-black flex-grow pl-1">01 phiếu giao hàng</span></div>
+                    </div>
+                    <div class="text-right text-xs mb-4 italic"><span id="prev-thu-ngayky">Ngày ...... tháng ...... năm 20...</span></div>
+                    <div class="grid grid-cols-5 text-center text-xs mt-2">
+                        <div><div class="font-bold text-[11px]">GIÁM ĐỐC</div><div class="italic text-[9px]">(Ký, đóng dấu)</div><div class="h-14"></div><div id="prev-thu-sig-giamdoc" class="font-bold text-[10px]">Đặng Khánh Huyền</div></div>
+                        <div><div class="font-bold text-[11px]">KẾ TOÁN TRƯỞNG</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-thu-sig-ketoan" class="font-bold text-[10px]">Nguyễn Văn Đủ</div></div>
+                        <div><div class="font-bold text-[11px]">NGƯỜI NỘP</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-thu-sig-nguoinop" class="font-bold text-[10px]">Trần Văn Minh</div></div>
+                        <div><div class="font-bold text-[11px]">NGƯỜI LẬP</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-thu-sig-lap" class="font-bold text-[10px]">Lê Thị Ngọc Hân</div></div>
+                        <div><div class="font-bold text-[11px]">THỦ QUỸ</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-thu-sig-thuquy" class="font-bold text-[10px]">Đoàn Bảo Bình</div></div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Result View -->
-        <div id="result-view" class="card hidden">
-            <div class="result-summary">
-                <h2>KẾT QUẢ BÀI LÀM</h2>
-                <div id="score-circle" class="score-circle">
-                    0/50
-                    <span id="score-percent">0%</span>
-                </div>
-                <p id="result-detail" style="margin-bottom: 2rem; font-size: 1.1rem; font-weight: 500;"></p>
-                
-                <div style="text-align: left; margin-top: 2rem;">
-                    <h3 style="margin-bottom: 1rem; color: var(--primary);">Chi tiết bài làm:</h3>
-                    <div id="result-details-container"></div>
-                </div>
+        <!-- ================= VIEW 3: FORM PHIẾU CHI (MẪU 02-TT) ================= -->
+        <div id="view-chi" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 tab-transition">
+            <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 no-print flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="switchView('home')" class="text-slate-400 hover:text-slate-700 text-sm mr-1"><i class="fa-solid fa-arrow-left"></i></button>
+                            <h2 class="text-lg font-bold text-amber-800 flex items-center">
+                                <i class="fa-solid fa-receipt mr-2"></i> Phiếu Chi (Mẫu 02-TT)
+                            </h2>
+                        </div>
+                        <button type="button" onclick="resetFormChi()" class="text-xs text-rose-600 hover:text-rose-800 font-medium bg-rose-50 px-2.5 py-1 rounded-md transition">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Làm mới
+                        </button>
+                    </div>
 
-                <div style="margin-top: 2rem;">
-                    <button class="btn" onclick="switchView('home')">Về Trang Chủ</button>
+                    <form id="form-chi-data" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Số Phiếu Chi</label>
+                                <input type="text" id="chi-so-phieu" value="PC001" oninput="updatePreviewChi()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Ngày Lập</label>
+                                <input type="date" id="chi-ngay-lap" onchange="updatePreviewChi()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tài Khoản Nợ</label>
+                                <input type="text" id="chi-tk-no" value="331" oninput="updatePreviewChi()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tài Khoản Có</label>
+                                <input type="text" id="chi-tk-co" value="1111" oninput="updatePreviewChi()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Họ tên người nhận tiền</label>
+                            <input type="text" id="chi-nguoi-nhan" value="Nguyễn Văn A" oninput="updatePreviewChi()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Địa chỉ / Đơn vị</label>
+                            <input type="text" id="chi-dia-chi" value="Phòng Kinh Doanh - Công ty TNHH Thời trang DB" oninput="updatePreviewChi()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Lý do chi tiền</label>
+                            <textarea id="chi-ly-do" rows="2" oninput="updatePreviewChi()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">Thanh toán tiền chi phí văn phòng phẩm tháng này</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Số Tiền (VNĐ)</label>
+                            <input type="text" id="chi-so-tien" value="1.550.000" oninput="formatAndConvertMoneyChi()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg font-semibold text-amber-700">
+                            <p class="text-xs text-slate-500 mt-1 italic" id="chi-so-tien-chu-preview">Bằng chữ: Một triệu, năm trăm năm mươi nghìn đồng chẵn.</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Kèm theo chứng từ gốc</label>
+                            <input type="text" id="chi-chung-tu" value="01 hóa đơn GTGT và bảng kê chi tiết" oninput="updatePreviewChi()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div class="border-t border-slate-100 pt-3 mt-4">
+                            <p class="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Thông tin Chữ ký</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Người lập</label><input type="text" id="chi-sig-lap" value="Lê Thị Ngọc Hân" oninput="updatePreviewChi()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Kế toán trưởng</label><input type="text" id="chi-sig-ketoan" value="Nguyễn Văn Đủ" oninput="updatePreviewChi()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Thủ quỹ</label><input type="text" id="chi-sig-thuquy" value="Đoàn Bảo Bình" oninput="updatePreviewChi()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Giám đốc</label><input type="text" id="chi-sig-giamdoc" value="Đặng Khánh Huyền" oninput="updatePreviewChi()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-200 grid grid-cols-2 gap-2">
+                    <button type="button" onclick="exportExcelChi()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center"><i class="fa-solid fa-file-excel mr-1.5"></i> Xuất Excel</button>
+                    <button type="button" onclick="exportWordChi()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center"><i class="fa-solid fa-file-word mr-1.5"></i> Xuất Word</button>
+                    <button type="button" onclick="printVoucher('printable-voucher-chi')" class="col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-3 px-3 rounded-lg shadow-md transition flex items-center justify-center"><i class="fa-solid fa-print mr-2"></i> In Phiếu Chi (A4)</button>
+                </div>
+            </div>
+
+            <!-- Preview Phiếu Chi -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col items-center overflow-x-auto">
+                <div class="w-full flex justify-between items-center mb-4 no-print border-b border-slate-100 pb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-900 bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-eye mr-1"></i> Xem trước Mẫu 02-TT</span>
+                    <button onclick="switchView('home')" class="text-xs text-indigo-600 hover:underline font-medium"><i class="fa-solid fa-house mr-1"></i> Về Trang chủ</button>
+                </div>
+                <div id="printable-voucher-chi" class="printable-area voucher-font bg-white text-black w-full max-w-[210mm] p-6 text-[13px] leading-relaxed border border-slate-200 shadow-md rounded-lg relative">
+                    <table class="w-full mb-3">
+                        <tr>
+                            <td class="align-top w-[55%] whitespace-nowrap">
+                                <div class="font-bold uppercase text-[12px]">Đơn vị: Công ty TNHH Thời trang DB</div>
+                                <div class="text-[10px]">Địa chỉ: Số 125 Nguyễn Văn Linh, Phường Tân Thuận, TP. Hồ Chí Minh</div>
+                            </td>
+                            <td class="align-top text-right w-[45%]">
+                                <div class="font-bold text-[12px]">Mẫu số 02 - TT</div>
+                                <div class="text-[10px] italic">(Kèm theo Thông tư số 99/2025/TT-BTC)</div>
+                                <div class="text-xs space-y-1 inline-block text-left pr-4 mt-2">
+                                    <div>Số: <span id="prev-chi-so" class="font-bold underline px-1">PC001</span></div>
+                                    <div>Nợ: <span id="prev-chi-no" class="font-bold underline px-1">331</span> | Có: <span id="prev-chi-co" class="font-bold underline px-1">1111</span></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="text-center my-3">
+                        <h2 class="text-xl font-bold uppercase tracking-wide">PHIẾU CHI</h2>
+                        <div id="prev-chi-ngaythang" class="text-xs italic">Ngày ...... tháng ...... năm 20...</div>
+                    </div>
+                    <div class="space-y-2.5 mb-5 text-[13px] mt-4">
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Họ tên người nhận:</span><span id="prev-chi-nguoinhan" class="font-bold border-b border-dotted border-black flex-grow pl-1">Nguyễn Văn A</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Địa chỉ:</span><span id="prev-chi-diachi" class="border-b border-dotted border-black flex-grow pl-1">Phòng Kinh Doanh</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Lý do chi:</span><span id="prev-chi-lydo" class="border-b border-dotted border-black flex-grow pl-1">Thanh toán văn phòng phẩm</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Số tiền:</span><span id="prev-chi-sotien" class="font-bold border-b border-dotted border-black flex-grow pl-1">1.550.000 VNĐ</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Viết bằng chữ:</span><span id="prev-chi-sotienchu" class="italic border-b border-dotted border-black flex-grow pl-1">Một triệu, năm trăm năm mươi nghìn đồng chẵn.</span></div>
+                        <div class="flex"><span class="w-48 whitespace-nowrap">Chứng từ gốc kèm theo:</span><span id="prev-chi-chungtu" class="border-b border-dotted border-black flex-grow pl-1">01 hóa đơn GTGT</span></div>
+                    </div>
+                    <div class="text-right text-xs mb-4 italic"><span id="prev-chi-ngayky">Ngày ...... tháng ...... năm 20...</span></div>
+                    <div class="grid grid-cols-5 text-center text-xs mt-2">
+                        <div><div class="font-bold text-[11px]">GIÁM ĐỐC</div><div class="italic text-[9px]">(Ký, đóng dấu)</div><div class="h-14"></div><div id="prev-chi-sig-giamdoc" class="font-bold text-[10px]">Đặng Khánh Huyền</div></div>
+                        <div><div class="font-bold text-[11px]">KẾ TOÁN TRƯỞNG</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-chi-sig-ketoan" class="font-bold text-[10px]">Nguyễn Văn Đủ</div></div>
+                        <div><div class="font-bold text-[11px]">THỦ QUỸ</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-chi-sig-thuquy" class="font-bold text-[10px]">Đoàn Bảo Bình</div></div>
+                        <div><div class="font-bold text-[11px]">NGƯỜI LẬP</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-chi-sig-lap" class="font-bold text-[10px]">Lê Thị Ngọc Hân</div></div>
+                        <div><div class="font-bold text-[11px]">NGƯỜI NHẬN</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-chi-sig-nguoinhan" class="font-bold text-[10px]">Nguyễn Văn A</div></div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- History View -->
-        <div id="history-view" class="card hidden">
-            <h2>LỊCH SỬ LÀM BÀI TRÊN THIẾT BỊ</h2>
-            <p style="color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.95rem;">Danh sách toàn bộ các bài làm đã được hệ thống tự động ghi nhận trên thiết bị này:</p>
-            
-            <div id="history-content">
-                <!-- Nội dung danh sách lịch sử tự động sẽ được render ở đây -->
+        <!-- ================= VIEW 4: PHIẾU NHẬP KHO (MẪU 01-VT) ================= -->
+        <div id="view-nhapkho" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 tab-transition">
+            <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 no-print flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="switchView('home')" class="text-slate-400 hover:text-slate-700 text-sm mr-1"><i class="fa-solid fa-arrow-left"></i></button>
+                            <h2 class="text-lg font-bold text-cyan-800 flex items-center">
+                                <i class="fa-solid fa-boxes-packing mr-2"></i> Phiếu Nhập Kho (Mẫu 01-VT)
+                            </h2>
+                        </div>
+                        <button type="button" onclick="resetFormNhapKho()" class="text-xs text-rose-600 hover:text-rose-800 font-medium bg-rose-50 px-2.5 py-1 rounded-md transition">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Làm mới
+                        </button>
+                    </div>
+
+                    <form id="form-nhapkho-data" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Số Phiếu Nhập</label>
+                                <input type="text" id="nk-so-phieu" value="PNK001" oninput="updatePreviewNhapKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Ngày Lập</label>
+                                <input type="date" id="nk-ngay-lap" onchange="updatePreviewNhapKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tài Khoản Nợ</label>
+                                <input type="text" id="nk-tk-no" value="1561" oninput="updatePreviewNhapKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tài Khoản Có</label>
+                                <input type="text" id="nk-tk-co" value="331" oninput="updatePreviewNhapKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Họ tên người giao hàng</label>
+                            <input type="text" id="nk-nguoi-giao" value="Hoàng Văn Nam" oninput="updatePreviewNhapKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Theo hóa đơn số</label>
+                                <input type="text" id="nk-theo-chung-tu" value="HD/2026/089" oninput="updatePreviewNhapKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Ngày chứng từ</label>
+                                <input type="date" id="nk-ngay-chung-tu" onchange="updatePreviewNhapKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nhập tại kho / Địa điểm</label>
+                            <input type="text" id="nk-kho-nhap" value="Kho Tổng - Công ty TNHH Thời trang DB" oninput="updatePreviewNhapKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+
+                        <!-- Danh sách hàng hóa nhập kho -->
+                        <div class="pt-2">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Danh sách vật tư / hàng hóa</label>
+                                <button type="button" onclick="addVTuRow('nhap')" class="text-xs bg-cyan-50 text-cyan-700 hover:bg-cyan-100 px-2.5 py-1 rounded-md font-semibold"><i class="fa-solid fa-plus mr-1"></i> Thêm dòng</button>
+                            </div>
+                            <div id="container-items-nhap" class="space-y-3 max-h-56 overflow-y-auto pr-1">
+                                <!-- Dòng 1 mặc định -->
+                                <div class="item-row-nhap bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-2 text-xs">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold text-cyan-800 item-stt">#1</span>
+                                        <button type="button" onclick="removeVTuRow(this, 'nhap')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                    <input type="text" placeholder="Tên, nhãn hiệu, quy cách hàng hóa" value="Vải cotton cao cấp màu trắng sữa" class="item-ten w-full px-2 py-1.5 border border-slate-300 rounded bg-white" oninput="updatePreviewNhapKho()">
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <input type="text" placeholder="Mã số" value="VAI-CT01" class="item-maso px-2 py-1 border border-slate-300 rounded bg-white" oninput="updatePreviewNhapKho()">
+                                        <input type="text" placeholder="ĐVT" value="Mét" class="item-dvt px-2 py-1 border border-slate-300 rounded bg-white" oninput="updatePreviewNhapKho()">
+                                        <input type="number" placeholder="SL theo CT" value="500" class="item-slct px-2 py-1 border border-slate-300 rounded bg-white" oninput="updatePreviewNhapKho()">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="text-[10px] text-slate-500">Thực nhập:</label>
+                                            <input type="number" value="500" class="item-sltt w-full px-2 py-1 border border-slate-300 rounded bg-white font-semibold text-cyan-700" oninput="updatePreviewNhapKho()">
+                                        </div>
+                                        <div>
+                                            <label class="text-[10px] text-slate-500">Đơn giá (VNĐ):</label>
+                                            <input type="text" value="45.000" class="item-dongia w-full px-2 py-1 border border-slate-300 rounded bg-white font-semibold" oninput="formatItemMoney(this); updatePreviewNhapKho()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-3 mt-4">
+                            <p class="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Thông tin Chữ ký</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Người lập</label><input type="text" id="nk-sig-lap" value="Lê Thị Ngọc Hân" oninput="updatePreviewNhapKho()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Kế toán trưởng</label><input type="text" id="nk-sig-ketoan" value="Nguyễn Văn Đủ" oninput="updatePreviewNhapKho()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Thủ kho</label><input type="text" id="nk-sig-thukho" value="Huỳnh Thị Kiều Nghi" oninput="updatePreviewNhapKho()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Giám đốc / Phê duyệt</label><input type="text" id="nk-sig-giamdoc" value="Đặng Khánh Huyền" oninput="updatePreviewNhapKho()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-200 grid grid-cols-2 gap-2">
+                    <button type="button" onclick="exportExcelNhapKho()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-medium text-xs py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center"><i class="fa-solid fa-file-excel mr-1.5"></i> Xuất Excel</button>
+                    <button type="button" onclick="exportWordNhapKho()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center"><i class="fa-solid fa-file-word mr-1.5"></i> Xuất Word</button>
+                    <button type="button" onclick="printVoucher('printable-voucher-nhap')" class="col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-3 px-3 rounded-lg shadow-md transition flex items-center justify-center"><i class="fa-solid fa-print mr-2"></i> In Phiếu Nhập Kho (A4)</button>
+                </div>
             </div>
-            
-            <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;" id="clear-history-container" class="hidden">
-                <button class="btn" onclick="switchView('home')">Về Trang Chủ</button>
-                <button class="btn btn-secondary" onclick="clearAllHistory()">Xóa toàn bộ lịch sử thiết bị</button>
+
+            <!-- Preview Phiếu Nhập Kho -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col items-center overflow-x-auto">
+                <div class="w-full flex justify-between items-center mb-4 no-print border-b border-slate-100 pb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-cyan-900 bg-cyan-50 px-3 py-1 rounded-full"><i class="fa-solid fa-eye mr-1"></i> Xem trước Mẫu 01-VT</span>
+                    <button onclick="switchView('home')" class="text-xs text-indigo-600 hover:underline font-medium"><i class="fa-solid fa-house mr-1"></i> Về Trang chủ</button>
+                </div>
+                <div id="printable-voucher-nhap" class="printable-area voucher-font bg-white text-black w-full max-w-[210mm] p-6 text-[12px] leading-relaxed border border-slate-200 shadow-md rounded-lg relative">
+                    <table class="w-full mb-3">
+                        <tr>
+                            <td class="align-top w-[55%] whitespace-nowrap">
+                                <div class="font-bold uppercase text-[11px]">Đơn vị: Công ty TNHH Thời trang DB</div>
+                                <div class="text-[10px]">Địa chỉ: Số 125 Nguyễn Văn Linh, Phường Tân Thuận, TP. Hồ Chí Minh</div>
+                            </td>
+                            <td class="align-top text-right w-[45%]">
+                                <div class="font-bold text-[11px]">Mẫu số 01 - VT</div>
+                                <div class="text-[10px] italic">(Kèm theo Thông tư số 99/2025/TT-BTC)</div>
+                                <div class="text-xs space-y-1 inline-block text-left pr-4 mt-2">
+                                    <div>Số: <span id="prev-nk-so" class="font-bold underline px-1">PNK001</span></div>
+                                    <div>Nợ: <span id="prev-nk-no" class="font-bold underline px-1">1561</span> | Có: <span id="prev-nk-co" class="font-bold underline px-1">331</span></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="text-center my-3">
+                        <h2 class="text-lg font-bold uppercase tracking-wide">PHIẾU NHẬP KHO</h2>
+                        <div id="prev-nk-ngaythang" class="text-xs italic">Ngày ...... tháng ...... năm 20...</div>
+                    </div>
+                    <div class="space-y-1.5 mb-4 text-[12px]">
+                        <div>- Họ và tên người giao hàng: <span id="prev-nk-nguoigiao" class="font-bold">Hoàng Văn Nam</span></div>
+                        <div>- Theo hóa đơn số: <span id="prev-nk-hoadon" class="underline">HD/2026/089</span> &nbsp;&nbsp; Ngày: <span id="prev-nk-ngayhd" class="underline">.../.../20...</span> của nhà cung cấp.</div>
+                        <div>- Nhập tại kho: <span id="prev-nk-khonhap" class="font-bold">Kho Tổng - Công ty TNHH Thời trang DB</span></div>
+                    </div>
+
+                    <!-- Bảng chi tiết vật tư -->
+                    <table class="w-full border-collapse border border-black text-[11px] mb-4">
+                        <thead>
+                            <tr class="bg-slate-100 text-center font-bold">
+                                <th class="border border-black p-1.5 w-10">STT</th>
+                                <th class="border border-black p-1.5">Tên, nhãn hiệu, quy cách vật tư, sản phẩm, hàng hóa</th>
+                                <th class="border border-black p-1.5 w-16">Mã số</th>
+                                <th class="border border-black p-1.5 w-14">ĐVT</th>
+                                <th class="border border-black p-1.5 w-16">Theo CT</th>
+                                <th class="border border-black p-1.5 w-16">Thực nhập</th>
+                                <th class="border border-black p-1.5 w-20">Đơn giá</th>
+                                <th class="border border-black p-1.5 w-24">Thành tiền</th>
+                            </tr>
+                            <tr class="text-center italic text-[10px] bg-slate-50">
+                                <td class="border border-black p-0.5">A</td>
+                                <td class="border border-black p-0.5">B</td>
+                                <td class="border border-black p-0.5">C</td>
+                                <td class="border border-black p-0.5">D</td>
+                                <td class="border border-black p-0.5">1</td>
+                                <td class="border border-black p-0.5">2</td>
+                                <td class="border border-black p-0.5">3</td>
+                                <td class="border border-black p-0.5">4</td>
+                            </tr>
+                        </thead>
+                        <tbody id="prev-nk-tbody">
+                            <!-- Được render động bằng JS -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="font-bold">
+                                <td colspan="7" class="border border-black p-1.5 text-right">CỘNG TỔNG CỘNG:</td>
+                                <td id="prev-nk-tongtien" class="border border-black p-1.5 text-right">0 VNĐ</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="space-y-1 mb-4 text-[12px]">
+                        <div>- Tổng số tiền (viết bằng chữ): <span id="prev-nk-sotienchu" class="italic font-bold">Không đồng.</span></div>
+                        <div>- Số chứng từ gốc kèm theo: <span id="prev-nk-chungtukem" class="underline">01 Hóa đơn GTGT và Biên bản giao nhận</span></div>
+                    </div>
+
+                    <div class="text-right text-xs mb-2 italic"><span id="prev-nk-ngayky">Ngày ...... tháng ...... năm 20...</span></div>
+                    <div class="grid grid-cols-4 text-center text-xs mt-2 pt-1">
+                        <div><div class="font-bold text-[11px]">NGƯỜI LẬP PHIẾU</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-nk-sig-lap" class="font-bold text-[10px]">Lê Thị Ngọc Hân</div></div>
+                        <div><div class="font-bold text-[11px]">NGƯỜI GIAO HÀNG</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-nk-sig-nguoigiao" class="font-bold text-[10px]">Hoàng Văn Nam</div></div>
+                        <div><div class="font-bold text-[11px]">THỦ KHO</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-nk-sig-thukho" class="font-bold text-[10px]">Huỳnh Thị Kiều Nghi</div></div>
+                        <div><div class="font-bold text-[11px]">KẾ TOÁN TRƯỞNG</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-nk-sig-ketoan" class="font-bold text-[10px]">Nguyễn Văn Đủ</div></div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- ================= VIEW 5: PHIẾU XUẤT KHO (MẪU 02-VT) ================= -->
+        <div id="view-xuatkho" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 tab-transition">
+            <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 no-print flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="switchView('home')" class="text-slate-400 hover:text-slate-700 text-sm mr-1"><i class="fa-solid fa-arrow-left"></i></button>
+                            <h2 class="text-lg font-bold text-purple-800 flex items-center">
+                                <i class="fa-solid fa-truck-ramp-box mr-2"></i> Phiếu Xuất Kho (Mẫu 02-VT)
+                            </h2>
+                        </div>
+                        <button type="button" onclick="resetFormXuatKho()" class="text-xs text-rose-600 hover:text-rose-800 font-medium bg-rose-50 px-2.5 py-1 rounded-md transition">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Làm mới
+                        </button>
+                    </div>
+
+                    <form id="form-xuatkho-data" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Số Phiếu Xuất</label>
+                                <input type="text" id="xk-so-phieu" value="PXK001" oninput="updatePreviewXuatKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Ngày Lập</label>
+                                <input type="date" id="xk-ngay-lap" onchange="updatePreviewXuatKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tài Khoản Nợ</label>
+                                <input type="text" id="xk-tk-no" value="621" oninput="updatePreviewXuatKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tài Khoản Có</label>
+                                <input type="text" id="xk-tk-co" value="152" oninput="updatePreviewXuatKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Họ tên người nhận hàng</label>
+                            <input type="text" id="xk-nguoi-nhan" value="Nguyễn Văn Xưởng" oninput="updatePreviewXuatKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Lý do xuất kho</label>
+                            <input type="text" id="xk-ly-do" value="Xuất vải nguyên phụ liệu cho xưởng may sản xuất đơn hàng tháng này" oninput="updatePreviewXuatKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Xuất tại kho / Địa điểm</label>
+                            <input type="text" id="xk-kho-xuat" value="Kho Nguyên Phụ Liệu - Công ty TNHH Thời trang DB" oninput="updatePreviewXuatKho()" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg">
+                        </div>
+
+                        <!-- Danh sách hàng hóa xuất kho -->
+                        <div class="pt-2">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Danh sách vật tư / hàng hóa xuất</label>
+                                <button type="button" onclick="addVTuRow('xuat')" class="text-xs bg-purple-50 text-purple-700 hover:bg-purple-100 px-2.5 py-1 rounded-md font-semibold"><i class="fa-solid fa-plus mr-1"></i> Thêm dòng</button>
+                            </div>
+                            <div id="container-items-xuat" class="space-y-3 max-h-56 overflow-y-auto pr-1">
+                                <!-- Dòng 1 mặc định -->
+                                <div class="item-row-xuat bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-2 text-xs">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold text-purple-800 item-stt">#1</span>
+                                        <button type="button" onclick="removeVTuRow(this, 'xuat')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                    <input type="text" placeholder="Tên, nhãn hiệu, quy cách hàng hóa" value="Vải cotton cao cấp màu trắng sữa" class="item-ten w-full px-2 py-1.5 border border-slate-300 rounded bg-white" oninput="updatePreviewXuatKho()">
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <input type="text" placeholder="Mã số" value="VAI-CT01" class="item-maso px-2 py-1 border border-slate-300 rounded bg-white" oninput="updatePreviewXuatKho()">
+                                        <input type="text" placeholder="ĐVT" value="Mét" class="item-dvt px-2 py-1 border border-slate-300 rounded bg-white" oninput="updatePreviewXuatKho()">
+                                        <input type="number" placeholder="SL yêu cầu" value="200" class="item-slreq px-2 py-1 border border-slate-300 rounded bg-white" oninput="updatePreviewXuatKho()">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="text-[10px] text-slate-500">Thực xuất:</label>
+                                            <input type="number" value="200" class="item-sltt w-full px-2 py-1 border border-slate-300 rounded bg-white font-semibold text-purple-700" oninput="updatePreviewXuatKho()">
+                                        </div>
+                                        <div>
+                                            <label class="text-[10px] text-slate-500">Đơn giá (VNĐ):</label>
+                                            <input type="text" value="45.000" class="item-dongia w-full px-2 py-1 border border-slate-300 rounded bg-white font-semibold" oninput="formatItemMoney(this); updatePreviewXuatKho()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-3 mt-4">
+                            <p class="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Thông tin Chữ ký</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Người lập</label><input type="text" id="xk-sig-lap" value="Lê Thị Ngọc Hân" oninput="updatePreviewXuatKho()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Kế toán trưởng</label><input type="text" id="xk-sig-ketoan" value="Nguyễn Văn Đủ" oninput="updatePreviewXuatKho()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Thủ kho</label><input type="text" id="xk-sig-thukho" value="Đoàn Bảo Bình" oninput="updatePreviewXuatKho()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                                <div><label class="block text-[11px] text-slate-600 mb-0.5">Giám đốc / Phê duyệt</label><input type="text" id="xk-sig-giamdoc" value="Đặng Khánh Huyền" oninput="updatePreviewXuatKho()" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-200 grid grid-cols-2 gap-2">
+                    <button type="button" onclick="exportExcelXuatKho()" class="bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center"><i class="fa-solid fa-file-excel mr-1.5"></i> Xuất Excel</button>
+                    <button type="button" onclick="exportWordXuatKho()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center"><i class="fa-solid fa-file-word mr-1.5"></i> Xuất Word</button>
+                    <button type="button" onclick="printVoucher('printable-voucher-xuat')" class="col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-3 px-3 rounded-lg shadow-md transition flex items-center justify-center"><i class="fa-solid fa-print mr-2"></i> In Phiếu Xuất Kho (A4)</button>
+                </div>
+            </div>
+
+            <!-- Preview Phiếu Xuất Kho -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col items-center overflow-x-auto">
+                <div class="w-full flex justify-between items-center mb-4 no-print border-b border-slate-100 pb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-purple-900 bg-purple-50 px-3 py-1 rounded-full"><i class="fa-solid fa-eye mr-1"></i> Xem trước Mẫu 02-VT</span>
+                    <button onclick="switchView('home')" class="text-xs text-indigo-600 hover:underline font-medium"><i class="fa-solid fa-house mr-1"></i> Về Trang chủ</button>
+                </div>
+                <div id="printable-voucher-xuat" class="printable-area voucher-font bg-white text-black w-full max-w-[210mm] p-6 text-[12px] leading-relaxed border border-slate-200 shadow-md rounded-lg relative">
+                    <table class="w-full mb-3">
+                        <tr>
+                            <td class="align-top w-[55%] whitespace-nowrap">
+                                <div class="font-bold uppercase text-[11px]">Đơn vị: Công ty TNHH Thời trang DB</div>
+                                <div class="text-[10px]">Địa chỉ: Số 125 Nguyễn Văn Linh, Phường Tân Thuận, TP. Hồ Chí Minh</div>
+                            </td>
+                            <td class="align-top text-right w-[45%]">
+                                <div class="font-bold text-[11px]">Mẫu số 02 - VT</div>
+                                <div class="text-[10px] italic">(Kèm theo Thông tư số 99/2025/TT-BTC)</div>
+                                <div class="text-xs space-y-1 inline-block text-left pr-4 mt-2">
+                                    <div>Số: <span id="prev-xk-so" class="font-bold underline px-1">PXK001</span></div>
+                                    <div>Nợ: <span id="prev-xk-no" class="font-bold underline px-1">621</span> | Có: <span id="prev-xk-co" class="font-bold underline px-1">152</span></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="text-center my-3">
+                        <h2 class="text-lg font-bold uppercase tracking-wide">PHIẾU XUẤT KHO</h2>
+                        <div id="prev-xk-ngaythang" class="text-xs italic">Ngày ...... tháng ...... năm 20...</div>
+                    </div>
+                    <div class="space-y-1.5 mb-4 text-[12px]">
+                        <div>- Họ và tên người nhận hàng: <span id="prev-xk-nguoinhan" class="font-bold">Nguyễn Văn Xưởng</span></div>
+                        <div>- Lý do xuất kho: <span id="prev-xk-lydo" class="font-bold">Xuất vải nguyên phụ liệu cho xưởng may</span></div>
+                        <div>- Xuất tại kho: <span id="prev-xk-khoxuat" class="font-bold">Kho Nguyên Phụ Liệu - Công ty TNHH Thời trang DB</span></div>
+                    </div>
+
+                    <!-- Bảng chi tiết vật tư xuất -->
+                    <table class="w-full border-collapse border border-black text-[11px] mb-4">
+                        <thead>
+                            <tr class="bg-slate-100 text-center font-bold">
+                                <th class="border border-black p-1.5 w-10">STT</th>
+                                <th class="border border-black p-1.5">Tên, nhãn hiệu, quy cách vật tư, sản phẩm, hàng hóa</th>
+                                <th class="border border-black p-1.5 w-16">Mã số</th>
+                                <th class="border border-black p-1.5 w-14">ĐVT</th>
+                                <th class="border border-black p-1.5 w-16">Yêu cầu</th>
+                                <th class="border border-black p-1.5 w-16">Thực xuất</th>
+                                <th class="border border-black p-1.5 w-20">Đơn giá</th>
+                                <th class="border border-black p-1.5 w-24">Thành tiền</th>
+                            </tr>
+                            <tr class="text-center italic text-[10px] bg-slate-50">
+                                <td class="border border-black p-0.5">A</td>
+                                <td class="border border-black p-0.5">B</td>
+                                <td class="border border-black p-0.5">C</td>
+                                <td class="border border-black p-0.5">D</td>
+                                <td class="border border-black p-0.5">1</td>
+                                <td class="border border-black p-0.5">2</td>
+                                <td class="border border-black p-0.5">3</td>
+                                <td class="border border-black p-0.5">4</td>
+                            </tr>
+                        </thead>
+                        <tbody id="prev-xk-tbody">
+                            <!-- Được render động bằng JS -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="font-bold">
+                                <td colspan="7" class="border border-black p-1.5 text-right">CỘNG TỔNG CỘNG:</td>
+                                <td id="prev-xk-tongtien" class="border border-black p-1.5 text-right">0 VNĐ</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="space-y-1 mb-4 text-[12px]">
+                        <div>- Tổng số tiền (viết bằng chữ): <span id="prev-xk-sotienchu" class="italic font-bold">Không đồng.</span></div>
+                        <div>- Số chứng từ gốc kèm theo: <span id="prev-xk-chungtukem" class="underline">01 Lệnh sản xuất và Giấy đề xuất vật tư</span></div>
+                    </div>
+
+                    <div class="text-right text-xs mb-2 italic"><span id="prev-xk-ngayky">Ngày ...... tháng ...... năm 20...</span></div>
+                    <div class="grid grid-cols-4 text-center text-xs mt-2 pt-1">
+                        <div><div class="font-bold text-[11px]">NGƯỜI LẬP PHIẾU</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-xk-sig-lap" class="font-bold text-[10px]">Lê Thị Ngọc Hân</div></div>
+                        <div><div class="font-bold text-[11px]">NGƯỜI NHẬN HÀNG</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-xk-sig-nguoinhan" class="font-bold text-[10px]">Nguyễn Văn Xưởng</div></div>
+                        <div><div class="font-bold text-[11px]">THỦ KHO</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-xk-sig-thukho" class="font-bold text-[10px]">Đoàn Bảo Bình</div></div>
+                        <div><div class="font-bold text-[11px]">KẾ TOÁN TRƯỞNG</div><div class="italic text-[9px]">(Ký, họ tên)</div><div class="h-14"></div><div id="prev-xk-sig-ketoan" class="font-bold text-[10px]">Nguyễn Văn Đủ</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <footer>
-        Hệ thống Ôn tập Kinh tế Chính trị Mác - Lênin &copy; 2026
+    <!-- FOOTER CHUNG -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500 no-print">
+        Công ty TNHH Thời trang DB &bull; Phần mềm Quản lý Chứng từ Kế toán theo Thông tư 99/2025/TT-BTC
     </footer>
 
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Dữ liệu câu hỏi
-        const rawQuestions = [
-            // Chương 1
-            {
-                chapter: "Chương 1",
-                question: "Ai là người đầu tiên đưa ra thuật ngữ \"kinh tế chính trị\"?",
-                options: [
-                    "a. William Petty",
-                    "b. Tomas Mun",
-                    "c. Francois Quesney",
-                    "d. Antoine Montchretien"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 1",
-                question: "Một trong những đóng góp nổi bật của V.I. Lênin đối với học thuyết kinh tế của Mác:",
-                options: [
-                    "a. Chỉ ra những vấn đề kinh tế chính trị cơ bản của thời kỳ cộng sản chủ nghĩa",
-                    "b. Chỉ ra những đặc điểm nổi bật giai đoạn cuối thế kỷ XX đầu thế kỷ XXI",
-                    "c. Chỉ ra những vấn đề kinh tế chính trị cơ bản của thời kỳ quá độ lên chủ nghĩa xã hội",
-                    "d. Chỉ ra tất cả những vấn đề của thời kỳ quá độ lên chủ nghĩa xã hội"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 1",
-                question: "Tác phẩm thể hiện tập trung và cô đọng nhất lý luận kinh tế chính trị của Mác:",
-                options: [
-                    "a. Bộ Tư bản",
-                    "b. Góp phần phê phán khoa kinh tế chính trị",
-                    "c. Tuyên ngôn của Đảng công sản",
-                    "d. Biện chứng của tự nhiên"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 1",
-                question: "Chủ nghĩa trọng nông đã nghiên cứu và phân tích lĩnh vực nào để rút ra lý luận kinh tế chính trị?",
-                options: [
-                    "a. Trao đổi",
-                    "b. Sản xuất",
-                    "c. Ngoại thương",
-                    "d. Tiêu dùng"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 1",
-                question: "Phương pháp nghiên cứu quan trọng của kinh tế chính trị Mác – Lênin:",
-                options: [
-                    "a. Phương pháp trừu tượng hóa khoa học",
-                    "b. Phương pháp lôgic kết hợp lịch sử",
-                    "c. Phương pháp phân tích - tổng hợp",
-                    "d. Phương pháp quy nạp - diễn dịch"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 1",
-                question: "Ai là người góp phần đưa kinh tế chính trị trở thành môn khoa học có tính hệ thống?",
-                options: [
-                    "a. Adam Smith",
-                    "b. Antoine Montchretien",
-                    "c. William Petty",
-                    "d. Francois Quesney"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 1",
-                question: "Đối tượng nghiên cứu của kinh tế - chính trị Mác – Lênin:",
-                options: [
-                    "a. Các quan hệ xã hội của sản xuất và trao đổi trong mối quan hệ tác động qua lại với lực lượng sản xuất và kiến trúc thượng tầng của phương thức sản xuất.",
-                    "b. Quan hệ xã hội giữa người với người",
-                    "c. Quá trình sản xuất, phân phối, trao đổi, tiêu dùng.",
-                    "d. Quan hệ xã hội trong mối quan hệ tác động qua lại với lực lượng sản xuất và kiến trúc thượng tầng của phương thức sản xuất."
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 1",
-                question: "Học thuyết kinh tế nào của C.Mác được coi là “hòn đá tảng trong hệ thống kinh tế chính trị Mác Lênin?",
-                options: [
-                    "a. Học thuyết giá trị",
-                    "b. Học thuyết tích lũy",
-                    "c. Học thuyết giá trị thặng dư",
-                    "d. Học thuyết lợi nhuận"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 1",
-                question: "Thuật ngữ \"kinh tế chính trị\" lần đầu tiên được đề cập đến trong tác phẩm nào?",
-                options: [
-                    "a. Bộ Tư bản của C. Mác",
-                    "b. Những nguyên lý của KTCT và thuế khóa của Đ. Ricardo",
-                    "c. Chuyên luận về kinh tế chính trị của A. Montchretien",
-                    "d. Của cải của các quốc gia của A. Smith"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 1",
-                question: "Hệ thống lý luận kinh tế chính trị đầu tiên nghiên cứu về nền sản xuất tư bản chủ nghĩa là:",
-                options: [
-                    "a. Kinh tế chính trị Mác",
-                    "b. Chủ nghĩa trọng thương",
-                    "c. Kinh tế chính trị cổ điển Anh",
-                    "d. Chủ nghĩa trọng nông"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 1",
-                question: "Ai là người đã chỉ ra những đặc điểm kinh tế nổi bật của chủ nghĩa tư bản độc quyền giai đoạn cuối thế kỷ XIX đầu thế kỷ XX?",
-                options: [
-                    "a. C. Mác",
-                    "b. Ph. Ăngghen",
-                    "c. V.I.Lênin",
-                    "d. A.Smith"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 1",
-                question: "Trước khi kinh tế chính trị Mác ra đời, lý luận kinh tế nào đã khái quát một cách hệ thống các phạm trù kinh tế, quy luật vận động của nền kinh tế thị trường?",
-                options: [
-                    "a. Kinh tế chính trị tân cổ điển",
-                    "b. Chủ nghĩa trọng thương",
-                    "c. Chủ nghĩa trọng nông",
-                    "d. Kinh tế chính trị cổ điển Anh"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 1",
-                question: "Kinh tế chính trị Mác - Lênin đã kế thừa và phát triển trực tiếp những thành tựu của hệ thống lý luận kinh tế nào?",
-                options: [
-                    "a. Kinh tế chính trị cổ điển Anh",
-                    "b. Chủ nghĩa trọng nông",
-                    "c. Kinh tế chính trị tân cổ điển",
-                    "d. Chủ nghĩa trọng thương"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 1",
-                question: "Chức năng tư tưởng của kinh tế chính trị Mác – Lênin thể hiện ở:",
-                options: [
-                    "a. Tất cả các phương án trên",
-                    "b. Góp phần tạo lập nền tảng tư tưởng cộng sản cho những người lao động tiến bộ.",
-                    "c. Góp phần xây dựng thế giới quan khoa học cho những chủ thể có mong muốn xây dựng một xã hội tốt đẹp",
-                    "d. Củng cố niềm tin cho những ai phấn đấu vì mục tiêu dân giàu, nước mạnh xã hội dân chủ, công bằng, văn minh."
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 1",
-                question: "Những mối liên hệ phản ánh bản chất, khách quan, lặp đi lặp lại của các hiện tượng và quá trình kinh tế là để chỉ:",
-                options: [
-                    "a. Quy luật kinh tế",
-                    "b. Đường lối kinh tế",
-                    "c. Quản lý kinh tế",
-                    "d. Chính sách kinh tế"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 1",
-                question: "Mục đích nghiên cứu của kinh tế chính trị Mác – Lênin là gì?",
-                options: [
-                    "a. Tìm ra những quy luật chung nhất chi phối sự vận động và phát triển của phương thức sản xuất.",
-                    "b. Tìm ra những quy luật riêng chi phối sự vận động và phát triển của phương thức sản xuất.",
-                    "c. Tìm ra những quy luật kinh tế chi phối sự vận động và phát triển của phương thức sản xuất",
-                    "d. Tìm ra những quy luật chung nhất chi phối sự vận động và phát triển của xã hội loài người."
-                ],
-                correct: 2
-            },
-
-            // Chương 2
-            {
-                chapter: "Chương 2",
-                question: "Quy luật nào yêu cầu việc sản xuất và trao đổi hàng hóa phải dựa trên cơ sở hao phí lao động xã hội cần thiết?",
-                options: [
-                    "a. Quy luật giá trị",
-                    "b. Quy luật cạnh tranh",
-                    "c. Quy luật cung - cầu",
-                    "d. Quy luật lưu thông tiền tệ"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 2",
-                question: "Vai trò của các chủ thể trung gian trong nền kinh tế thị trường?",
-                options: [
-                    "a. Tăng giá trị sử dụng của hàng hóa",
-                    "b. Tăng giá trị của hàng hóa",
-                    "c. Tăng giá trị trao đổi của hàng hóa",
-                    "d. Kết nối, thông tin trong các quan hệ mua bán"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 2",
-                question: "Xét về mặt cấu thành lượng giá trị của một đơn vị hàng hóa bao gồm:",
-                options: [
-                    "a. Hao phí tư liệu sản xuất và tư liệu sinh hoạt",
-                    "b. Hao phí lao động sống của chủ xí nghiệp cộng hao phí lao động sống của người làm thuê",
-                    "c. Hao phí lao động quá khứ của các yếu tố nguyên vật liệu thiết bị vật tư đầu vào cộng với hao phí lao động mới kết tinh thêm",
-                    "d. Hao phí lao cá biệt của người lao động làm thuê"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Hình thái tiền của giá trị hàng hóa xuất hiện khi nào?",
-                options: [
-                    "a. Những người sản xuất hàng hóa quy ước thống nhất sử dụng kim loại quý làm yếu tố ngang giá chung",
-                    "b. Nhà nước quy ước thống nhất chung thống nhất sử dụng kim loại quý cho xã hội",
-                    "c. Những người sản xuất hàng hóa quy ước thống nhất sử dụng một loại hàng hóa nhất định làm yếu tố ngang giá chung",
-                    "d. Nhà nước in và phát hành tiền"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Trong lịch sử khi nào có sự tách biệt về mặt kinh tế giữa các chủ thể sản xuất:",
-                options: [
-                    "a. Khi có sự xuất hiện sản xuất và tiêu dùng hàng hóa",
-                    "b. Khi có sự tách biệt về quyền sở hữu",
-                    "c. Khi chế độ sở hữu công cộng về tư liệu sản xuất ra đời",
-                    "d. Khi có sự hình thành chế độ sở hữu tập thể"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 2",
-                question: "Lao động cụ thể là:",
-                options: [
-                    "a. Lao động giống nhau giữa các loại lao động",
-                    "b. Lao động được qua huấn luyện đào tạo lao động thành thạo của người sản xuất hàng hóa",
-                    "c. Lao động có ích dưới một hình thức cụ thể của những nghề nghiệp chuyên môn nhất định",
-                    "d. Lao động có hao phí cơ bắp không hao phí thần kinh"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Đâu là bản chất của tiền trong kinh tế hàng hóa?",
-                options: [
-                    "a. Thước đo giá trị sử dụng của hàng hóa",
-                    "b. Thước đo giá trị sử dụng sức lao động của người sản xuất hàng hóa",
-                    "c. Hàng hóa đặc biệt đóng vai trò là yếu tố ngang giá chung cho thế giới hàng hóa",
-                    "d. Hàng hóa do nhà nước phát hành đóng vai trò là yếu tố quan trọng nhất thế giới vật chất"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Vai trò của cơ chế thị trường trong nền kinh tế thị trường là?",
-                options: [
-                    "a. Phương thức duy nhất để phân phối và sử dụng các nguồn vốn tài nguyên",
-                    "b. Phương thức quan trọng để sử dụng công nghệ sức lao động",
-                    "c. Phương thức cơ bản để phân phối và sử dụng các nguồn vốn tài nguyên công nghệ sức lao động",
-                    "d. Phương thức để người lao động sản xuất ra của cải vật chất"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Sản xuất hàng hóa hình thành và phát triển khi có điều kiện nào?",
-                options: [
-                    "a. Phân công lao động xã hội và chế độ công hữu về tư liệu sản xuất",
-                    "b. Phân công lao động riêng biệt và chế độ tư hữu về tư liệu sản xuất",
-                    "c. Phân công lao động cá biệt và chế độ tư hữu về tư liệu sản xuất",
-                    "d. Phân công lao động xã hội và sự tách biệt về mặt kinh tế giữa các chủ thể sản xuất"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 2",
-                question: "Quy luật nào là quy luật kinh tế cơ bản của sản xuất và trao đổi hàng hóa?",
-                options: [
-                    "a. Qui luật giá trị",
-                    "b. Qui luật cung cầu",
-                    "c. Qui luật cạnh tranh",
-                    "d. Qui luật lưu thông tiền tệ"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 2",
-                question: "Thực chất của giao dịch mua bán đất đai ở Việt Nam hiện nay là gì?",
-                options: [
-                    "a. Mua bán quyền định đoạt đất",
-                    "b. Mua bán quyền sử dụng đất",
-                    "c. Mua bán quyền sở hữu đất",
-                    "d. Mua bán quyền chiếm hữu đất"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 2",
-                question: "Cạnh tranh nội bộ ngành dẫn đến kết quả là:",
-                options: [
-                    "a. Hình thành lợi nhuận độc quyền",
-                    "b. Hình thành tỷ suất lợi nhuận độc quyền",
-                    "c. Hình thành giá cả độc quyền",
-                    "d. Hình thành giá trị thị trường của từng loại hàng hóa"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 2",
-                question: "Đơn vị đo lường lượng giá trị của hàng hóa là:",
-                options: [
-                    "a. Khả năng sử dụng hàng hóa trên thực tế",
-                    "b. Thời gian lao động xã hội cần thiết để sản xuất ra hàng hóa",
-                    "c. Mức hao phí lao động cá biệt để sản xuất ra hàng hóa",
-                    "d. Mức hao phí lao động cụ thể để sản xuất ra hàng hóa"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 2",
-                question: "Theo nghĩa hẹp thị trường được hiểu là:",
-                options: [
-                    "a. Nơi diễn ra hành vi sản xuất tiêu dùng hàng hóa",
-                    "b. Nơi diễn ra hành vi trao đổi mua bán hàng hóa giữa các chủ thể kinh tế với nhau",
-                    "c. Nơi diễn ra hành vi kết hợp các yếu tố để sản xuất hàng hóa của các chủ thể sản xuất",
-                    "d. Nơi diễn ra hành vi tiêu dùng hàng hóa giữa các chủ thể kinh tế với nhau"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 2",
-                question: "Adam Smith đã ví cơ chế thị trường với hình ảnh nào?",
-                options: [
-                    "a. Đôi tay vô hình",
-                    "b. Bàn tay hữu ích",
-                    "c. Bàn tay vô hình",
-                    "d. Bàn tay hữu hình"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Trong các chức năng của tiền tệ chức năng nào không buộc phải có tiền vàng?",
-                options: [
-                    "a. Phương tiện lưu thông và phương tiện thanh toán",
-                    "b. Thước đo giá trị",
-                    "c. Phương tiện cất trữ",
-                    "d. Hình thái giá trị"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 2",
-                question: "Mục tiêu mà người sản xuất muốn đạt được khi tham gia thị trường?",
-                options: [
-                    "a. Lợi nhuận tối thiểu trong điều kiện nguồn lực vô hạn",
-                    "b. Lợi nhuận tối thiểu trong điều kiện nguồn lực có hạn",
-                    "c. Lợi nhuận tối đa trong điều kiện nguồn lực vô hạn",
-                    "d. Lợi nhuận tối đa trong điều kiện nguồn lực có hạn"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 2",
-                question: "Đặc điểm chung của toàn bộ hàng hóa dịch vụ?",
-                options: [
-                    "a. Sản xuất tách rời tiêu dùng",
-                    "b. Phục vụ gián tiếp người tiêu dùng",
-                    "c. Phục vụ trực tiếp người cung ứng",
-                    "d. Sản xuất và tiêu dùng diễn ra đồng thời"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 2",
-                question: "Theo C.Mác sản phẩm của lao động chỉ mang hình thái hàng hóa khi nào?",
-                options: [
-                    "a. Phục vụ cho sản xuất",
-                    "b. Đi vào tiêu dùng không qua trao đổi",
-                    "c. Đưa ra trao đổi mua bán trên thị trường",
-                    "d. Thỏa mãn nhu cầu nào đó của con người"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Trong cùng một đơn vị thời gian hoạt động lao động nào tạo ra lượng giá trị lớn hơn?",
-                options: [
-                    "a. Lao động trừu tượng",
-                    "b. Lao động giản đơn",
-                    "c. Lao động cụ thể",
-                    "d. Lao động phức tạp"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 2",
-                question: "Giá trị sử dụng của hàng hóa do yếu tố nào quy định?",
-                options: [
-                    "a. Thuộc tính xã hội của hàng hóa",
-                    "b. Do người sản xuất và người tiêu dùng hàng hóa",
-                    "c. Do thuộc tính tự nhiên của yếu tố tham gia cấu thành nên hàng hóa",
-                    "d. Do người sản xuất hàng hóa"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Ưu thế của nền kinh tế thị trường?",
-                options: [
-                    "a. Tạo ra các phương thức để thỏa mãn tối đa nhu cầu của con người",
-                    "b. Tạo ra động lực mạnh mẽ cho sự hình thành ý tưởng mới của các chủ thể kinh tế",
-                    "c. Tất cả các phương án",
-                    "d. Phát huy tốt nhất tiềm năng của mọi chủ thể các vùng miền"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Quy luật nào điều tiết một cách khách quan mối quan hệ ganh đua kinh tế giữa các chủ thể trong sản xuất và trao đổi hàng hóa?",
-                options: [
-                    "a. Quy luật cung - cầu",
-                    "b. Quy luật giá trị",
-                    "c. Quy luật cạnh tranh",
-                    "d. Quy luật lưu thông tiền tệ"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 2",
-                question: "Theo C.Mác giá trị trao đổi là:",
-                options: [
-                    "a. Là khả năng trao đổi của các hàng hóa trong thị trường",
-                    "b. Mối quan hệ tỷ lệ về lượng giữa các giá trị sử dụng khác nhau",
-                    "c. Phần dôi dư về sử dụng do trao đổi loại hàng hóa này với hàng hóa khác",
-                    "d. Là cột mốc phân định khả năng trao đổi của một hàng hóa trong thị trường"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 2",
-                question: "Quy luật nào điều tiết một cách khách quan mối quan hệ giữa bên bán và bên mua hàng hóa trong nền kinh tế thị trường?",
-                options: [
-                    "a. Quy luật cạnh tranh",
-                    "b. Quy luật giá trị",
-                    "c. Quy luật lưu thông tiền tệ",
-                    "d. Quy luật cung - cầu"
-                ],
-                correct: 3
-            },
-
-            // Chương 3
-            {
-                chapter: "Chương 3",
-                question: "Theo C.Mác, trong quá trình sản xuất giá trị thặng dư, tư bản bất biến và tư bản khả biến có vai trò như thế nào?",
-                options: [
-                    "a. Tư bản bất biến và tư bản khả biến có vai trò ngang nhau trong quá trình tạo ra giá trị thặng dư",
-                    "b. Tư bản bất biến là điều kiện để sản xuất giá trị thặng dư; tư bản khả biến là nguồn gốc của giá trị thặng dư",
-                    "c. Tư bản bất biến và tư bản khả biến không có tính quyết định trong quá trình tạo ra giá trị thặng dư",
-                    "d. Tư bản bất biến là nguồn gốc của giá trị thặng dư; tư bản bất biến là điều kiện để sản xuất giá trị thặng dư"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 3",
-                question: "Trong quá trình sản xuất giá trị thặng dư, tư bản bất biến tồn tại dưới hình thái nào?",
-                options: [
-                    "a. Hình thái sức lao động, có ký hiệu là v",
-                    "b. Hình thái giá trị thặng dư, có ký hiệu là m",
-                    "c. Hình thái lợi nhuận, có ký hiệu là p",
-                    "d. Hình thái tư liệu sản xuất, có ký hiệu là c"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 3",
-                question: "Các yếu tố cấu thành giá trị hàng hóa sức lao động trong nền kinh tế thị trường:",
-                options: [
-                    "a. Chi phí đào tạo người lao động",
-                    "b. Giá trị các tư liệu sinh hoạt cần thiết (cả vật chất, tinh thần) để nuôi con của người lao động",
-                    "c. Giá trị các tư liệu sinh hoạt cần thiết (cả vật chất, tinh thần) để tái sản xuất ra sức lao động",
-                    "d. Tất cả các phương án"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 3",
-                question: "Trong nền kinh tế thị trường, hàng hoá sức lao động có tính chất đặc biệt gì so với các hàng hóa thông thường?",
-                options: [
-                    "a. Hàng hoá sức lao động trở thành điều kiện để sử dụng các hàng hóa khác",
-                    "b. Hàng hoá sức lao động được các nhà tư bản sử dụng nhiều lần",
-                    "c. Hàng hoá sức lao động được các nhà tư bản mua trên thi trường",
-                    "d. Trong quá trình sử dụng có khả năng tạo ra lượng giá trị lớn hơn giá trị bản thân nó"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 3",
-                question: "Trong nền kinh tế thị trường, điều kiện quyết định để tiền trở thành tư bản là:",
-                options: [
-                    "a. Tiền vận động trong quy luật lưu thông tiền tệ",
-                    "b. Nhà tư bản sử dụng tiền trong lưu thông",
-                    "c. Thị trường phát triển mạnh",
-                    "d. Sức lao động trở thành hàng hóa"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 3",
-                question: "Khối lượng giá trị thặng dư (M) phản ánh:",
-                options: [
-                    "a. Trình độ bóc lột của tư bản đối với lao động làm thuê",
-                    "b. Quy mô bóc lột của tư bản đối với lao động làm thuê",
-                    "c. Tính chất bóc lột của tư bản đối với lao động làm thuê",
-                    "d. Phạm vi bóc lột của tư bản đối với lao động"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 3",
-                question: "Một trong những hạn chế của phương pháp sản xuất giá trị thặng dư tuyệt đối",
-                options: [
-                    "a. Năng suất lao động không tăng",
-                    "b. Năng suất lao động tăng chậm",
-                    "c. Gặp phải sự phản kháng quyết liệt của công nhân",
-                    "d. Công nhân không tích cực làm việc"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Vai trò của tư bản khả biến trong quá trình sản xuất giá trị thặng dư:",
-                options: [
-                    "a. Là nguồn gốc tạo ra giá trị thặng dư",
-                    "b. Là điều kiện vật chất để sản xuất giá trị thặng dư",
-                    "c. Là cơ sở quyết định số lượng tư bản bất biến",
-                    "d. Là yếu tố quan trọng để sản xuất giá trị thặng dư"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 3",
-                question: "Tuần hoàn của tư bản công nghiệp phải trải qua:",
-                options: [
-                    "a. Hai giai đoạn sản xuất và một giai đoạn lưu thông",
-                    "b. Ba giai đoạn sản xuất và không có giai đoạn lưu thông",
-                    "c. Hai giai đoạn lưu thông và một giai đoạn sản xuất",
-                    "d. Ba giai đoạn lưu thông và không có giai đoạn sản xuất"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Tỷ suất giá trị thặng dư được tính bằng công thức nào dưới đây?",
-                options: [
-                    "a. m' = M/V",
-                    "b. Tất cả các phương án",
-                    "c. m' = (t'/t) x 100%",
-                    "d. m' = (m/v) x 100%"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Trong phạm vi toàn xã hội, nếu nhà tư bản trả công theo đúng giá trị sức lao động thì có còn bóc lột giá trị thặng dư không?",
-                options: [
-                    "a. Có",
-                    "b. Lỗ vốn",
-                    "c. Không",
-                    "d. Hòa vốn"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Theo C.Mác, tư bản là gì?",
-                options: [
-                    "a. Giá cả mang lại giá trị",
-                    "b. Giá trị đem lại giá trị thặng dư",
-                    "c. Giá cả đem lại lợi ích cho xã hội",
-                    "d. Giá cả mang lại giá trị thặng dư"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 3",
-                question: "Chu chuyển tư bản được đo lường bằng?",
-                options: [
-                    "a. Tốc độ tuần hoàn",
-                    "b. Hiệu quả kinh tế",
-                    "c. Tốc độ hao mòn máy móc nhà xưởng",
-                    "d. Thời gian chu chuyển"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 3",
-                question: "Theo C.Mác, phần thời gian lao động nào của người lao động tạo ra giá trị thặng dư?",
-                options: [
-                    "a. Thời gian lao động trừu tượng",
-                    "b. Thời gian lao động tất yếu",
-                    "c. Thời gian lao động cụ thể",
-                    "d. Thời gian lao động thặng dư"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 3",
-                question: "Mục đích của quá trình sản xuất tư bản chủ nghĩa?",
-                options: [
-                    "a. Sản xuất ra nhiều sản phẩm",
-                    "b. Áp dụng khoa học kỹ thuật vào sản xuất",
-                    "c. Sản xuất lợi nhuận",
-                    "d. Sản xuất ra giá trị thặng dư"
-                ],
-                correct: 3
-            },
-            {
-                chapter: "Chương 3",
-                question: "Theo C.Mác, điều kiện để sức lao động trở thành hàng hóa là:",
-                options: [
-                    "a. Người lao động được tự do đi lại và không có đủ các tư liệu sinh hoạt cần thiết để tự kết hợp với sức lao động của mình",
-                    "b. Người lao động được tự do thân thể và không có đủ các tư liệu sản xuất cần thiết để tự kết hợp với sức lao động của mình",
-                    "c. Người lao động có trình độ khoa học kỹ thuật",
-                    "d. Người lao động có đầy đủ điều kiện về trí lực"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 3",
-                question: "Chọn đáp án đúng về tư bản bất biến, tư bản khả biến, tư bản cố định, tư bản lưu động?",
-                options: [
-                    "a. Tư bản cố định là một bộ phận của tư bản bất biến",
-                    "b. Tư bản bất biến không thay đổi về lượng giá trị trong quá trình sản xuất",
-                    "c. Tất cả các phương án",
-                    "d. Tư bản khả biến là một bộ phận của tư bản lưu động"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Muốn tăng tốc độ chu chuyển của tư bản cần phải?",
-                options: [
-                    "a. Giảm thời gian sản xuất và giảm thời gian lưu thông",
-                    "b. Giảm thời gian sản xuất và tăng thời gian lưu thông",
-                    "c. Tăng thời gian sản xuất và giảm thời gian lưu thông",
-                    "d. Tăng thời gian sản xuất và thời gian lưu thông"
-                ],
-                correct: 0
-            },
-            {
-                chapter: "Chương 3",
-                question: "Nếu m không đổi, hàng hóa luôn bán được, thì đại lượng tư bản ứng trước càng lớn sẽ làm cho quy mô tích lũy thay đổi như thế nào?",
-                options: [
-                    "a. Quy mô tích lũy không đổi",
-                    "b. Quy mô tích lũy giảm",
-                    "c. Quy mô tích lũy tăng",
-                    "d. Quy mô tích lũy không tang"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Loại tư bản nào biến thành sức lao động, giá trị của nó được chuyển cho công nhân làm thuê?",
-                options: [
-                    "a. Tư bản bất biến",
-                    "b. Tư bản ứng trước",
-                    "c. Tư bản khả biến",
-                    "d. Tư bản thanh toán"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Động lực mạnh nhất thúc đẩy các nhà tư bản ra sức cải tiến kỹ thuật, tăng năng suất lao động là gì?",
-                options: [
-                    "a. Giá trị thặng dư tương đối",
-                    "b. Sản phẩm thặng dư",
-                    "c. Giá trị thặng dư siêu ngạch",
-                    "d. Giá trị thặng dư tuyệt đối"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Giá trị của hàng hóa được tính theo công thức nào?",
-                options: [
-                    "a. G = c + v",
-                    "b. G = v + m",
-                    "c. G = c + (v + m)",
-                    "d. G = v + (c + m)"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Theo C Mác, chi phí sản xuất được tính theo công thức:",
-                options: [
-                    "a. k = v + m",
-                    "b. k = c + v",
-                    "c. k = c + v + m",
-                    "d. k = c + m"
-                ],
-                correct: 1
-            },
-            {
-                chapter: "Chương 3",
-                question: "Theo C.Mác, công thức chung của tư bản là gì?",
-                options: [
-                    "a. T - H",
-                    "b. H - T - H' (trong đó H' khác H)",
-                    "c. T - H - T' (trong đó T' > T)",
-                    "d. T - H - T (trong đó T > T)"
-                ],
-                correct: 2
-            },
-            {
-                chapter: "Chương 3",
-                question: "Quá trình tích luỹ tư bản là:",
-                options: [
-                    "a. Là quá trình huy động vốn nhàn rỗi trong nhân dân",
-                    "b. Là quá trình huy động góp vốn từ các doanh nghiệp",
-                    "c. Biến một phần giá trị thặng dư thành tư bản phụ thêm",
-                    "d. Quá trình tích góp để dành của nhà tư bản"
-                ],
-                correct: 2
-            }
-        ];
-
-        // Application State
-        let currentMode = 'exam';
-        let pendingMode = '';
-        let currentQuestions = [];
-        let currentIndex = 0;
-        let userAnswers = {};
-        let timerInterval = null;
-        let timeLeft = 3600;
-        let currentStudentName = '';
-
-        // Helper: Shuffle array
-        function shuffle(array) {
-            let currentIndex = array.length, randomIndex;
-            while (currentIndex != 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-            }
-            return array;
-        }
-
-        // Open custom Name Modal instead of prompt()
-        function openNameModal(mode) {
-            pendingMode = mode;
-            if (mode === 'wrong') {
-                const wrongIds = JSON.parse(localStorage.getItem('ktct_wrong_questions') || '[]');
-                if (wrongIds.length === 0) {
-                    alert('Bạn chưa có câu trả lời sai nào được lưu lại!');
-                    return;
-                }
-            }
-            document.getElementById('student-name-input').value = '';
-            document.getElementById('name-modal').classList.remove('hidden');
-            document.getElementById('student-name-input').focus();
-        }
-
-        function closeNameModal() {
-            document.getElementById('name-modal').classList.add('hidden');
-        }
-
-        // Confirm Name and Start Quiz
-        function confirmStartQuiz() {
-            let name = document.getElementById('student-name-input').value.trim();
-            if (!name) {
-                alert('Vui lòng nhập họ tên để tiếp tục!');
-                document.getElementById('student-name-input').focus();
-                return;
-            }
-            currentStudentName = name;
-            setWatermark(currentStudentName);
-            closeNameModal();
-
-            if (pendingMode === 'exam') startExam();
-            else if (pendingMode === 'practice') startPractice();
-            else if (pendingMode === 'wrong') startWrongReview();
-            else if (pendingMode === 'chapter1') startChapterReview('Chương 1');
-            else if (pendingMode === 'chapter2') startChapterReview('Chương 2');
-            else if (pendingMode === 'chapter3') startChapterReview('Chương 3');
-            else if (pendingMode === 'random20') startRandomQuiz(20);
-            else if (pendingMode === 'random30') startRandomQuiz(30);
-            else if (pendingMode === 'random50') startRandomQuiz(50);
-        }
-
-        // Set Watermark display
-        function setWatermark(name) {
-            const container = document.getElementById('watermark-container');
-            container.innerHTML = '';
-            for (let i = 0; i < 30; i++) {
-                const div = document.createElement('div');
-                div.className = 'watermark-text';
-                div.innerText = name;
-                container.appendChild(div);
-            }
-        }
-
-        // Switch Views
-        function switchView(viewName) {
-            document.getElementById('home-view').classList.add('hidden');
-            document.getElementById('quiz-view').classList.add('hidden');
-            document.getElementById('result-view').classList.add('hidden');
-            document.getElementById('history-view').classList.add('hidden');
-
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-
-            if (viewName === 'home') {
-                document.getElementById('home-view').classList.remove('hidden');
-                document.querySelector('.nav-btn').classList.add('active');
-                updateWrongCountText();
-                setWatermark('');
-            } else if (viewName === 'quiz') {
-                document.getElementById('quiz-view').classList.remove('hidden');
-            } else if (viewName === 'result') {
-                document.getElementById('result-view').classList.remove('hidden');
-            } else if (viewName === 'history') {
-                document.getElementById('history-view').classList.remove('hidden');
-                document.querySelectorAll('.nav-btn')[1].classList.add('active');
-                setWatermark('');
-                renderDeviceHistory(); // Tự động load và hiển thị lịch sử của thiết bị
-            }
-
-            if (timerInterval && viewName !== 'quiz') {
-                clearInterval(timerInterval);
-            }
-        }
-
-        // Update wrong count text on home
-        function updateWrongCountText() {
-            const wrongIds = JSON.parse(localStorage.getItem('ktct_wrong_questions') || '[]');
-            const el = document.getElementById('wrong-count-text');
-            el.innerText = `Ôn luyện lại các câu hỏi đã làm sai (${wrongIds.length} câu trong danh sách cần ôn).`;
-        }
-
-        // Start Exam Mode
-        function startExam() {
-            currentMode = 'exam';
-            let pool = JSON.parse(JSON.stringify(rawQuestions));
-            shuffle(pool);
-            currentQuestions = pool.slice(0, 50).map(q => {
-                let optionsWithOriginalIndex = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
-                shuffle(optionsWithOriginalIndex);
-                let newCorrectIndex = optionsWithOriginalIndex.findIndex(item => item.originalIndex === q.correct);
-                return {
-                    chapter: q.chapter,
-                    question: q.question,
-                    options: optionsWithOriginalIndex.map(item => item.text),
-                    correct: newCorrectIndex
-                };
-            });
-
-            currentIndex = 0;
-            userAnswers = {};
-            timeLeft = 3600;
-
-            switchView('quiz');
-            document.getElementById('timer').classList.remove('hidden');
-            startTimer();
-            renderQuestion();
-        }
-
-        // Start Practice Mode
-        function startPractice() {
-            currentMode = 'practice';
-            let pool = JSON.parse(JSON.stringify(rawQuestions));
-            shuffle(pool);
-            currentQuestions = pool.slice(0, 50).map(q => {
-                let optionsWithOriginalIndex = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
-                shuffle(optionsWithOriginalIndex);
-                let newCorrectIndex = optionsWithOriginalIndex.findIndex(item => item.originalIndex === q.correct);
-                return {
-                    chapter: q.chapter,
-                    question: q.question,
-                    options: optionsWithOriginalIndex.map(item => item.text),
-                    correct: newCorrectIndex
-                };
-            });
-
-            currentIndex = 0;
-            userAnswers = {};
-
-            switchView('quiz');
-            document.getElementById('timer').classList.add('hidden');
-            renderQuestion();
-        }
-
-        // Start Wrong Review Mode
-        function startWrongReview() {
-            const wrongIds = JSON.parse(localStorage.getItem('ktct_wrong_questions') || '[]');
-            currentMode = 'wrong';
-            let pool = rawQuestions.filter(q => wrongIds.includes(q.question));
-
-            currentQuestions = JSON.parse(JSON.stringify(pool)).map(q => {
-                let optionsWithOriginalIndex = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
-                shuffle(optionsWithOriginalIndex);
-                let newCorrectIndex = optionsWithOriginalIndex.findIndex(item => item.originalIndex === q.correct);
-                return {
-                    chapter: q.chapter,
-                    question: q.question,
-                    options: optionsWithOriginalIndex.map(item => item.text),
-                    correct: newCorrectIndex
-                };
-            });
-
-            currentIndex = 0;
-            userAnswers = {};
-
-            switchView('quiz');
-            document.getElementById('timer').classList.add('hidden');
-            renderQuestion();
-        }
-
-        // Start Chapter Review Mode
-        function startChapterReview(chapterName) {
-            currentMode = 'chapter';
-            let pool = rawQuestions.filter(q => q.chapter === chapterName);
-            shuffle(pool);
-
-            currentQuestions = JSON.parse(JSON.stringify(pool)).map(q => {
-                let optionsWithOriginalIndex = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
-                shuffle(optionsWithOriginalIndex);
-                let newCorrectIndex = optionsWithOriginalIndex.findIndex(item => item.originalIndex === q.correct);
-                return {
-                    chapter: q.chapter,
-                    question: q.question,
-                    options: optionsWithOriginalIndex.map(item => item.text),
-                    correct: newCorrectIndex
-                };
-            });
-
-            currentIndex = 0;
-            userAnswers = {};
-
-            switchView('quiz');
-            document.getElementById('timer').classList.add('hidden');
-            renderQuestion();
-        }
-
-        // Start Random Quiz Mode (20, 30, 50 questions mixed from all chapters)
-        function startRandomQuiz(count) {
-            currentMode = 'random';
-            let pool = JSON.parse(JSON.stringify(rawQuestions));
-            shuffle(pool);
-            let selectedPool = pool.slice(0, Math.min(count, pool.length));
-
-            currentQuestions = selectedPool.map(q => {
-                let optionsWithOriginalIndex = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
-                shuffle(optionsWithOriginalIndex);
-                let newCorrectIndex = optionsWithOriginalIndex.findIndex(item => item.originalIndex === q.correct);
-                return {
-                    chapter: q.chapter,
-                    question: q.question,
-                    options: optionsWithOriginalIndex.map(item => item.text),
-                    correct: newCorrectIndex
-                };
-            });
-
-            currentIndex = 0;
-            userAnswers = {};
-
-            switchView('quiz');
-            document.getElementById('timer').classList.add('hidden');
-            renderQuestion();
-        }
-
-        // Timer management
-        function startTimer() {
-            const timerEl = document.getElementById('timer');
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    alert('Hết thời gian làm bài!');
-                    finishQuiz();
-                    return;
-                }
-                timeLeft--;
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                timerEl.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            }, 1000);
-        }
-
-        // Render current question
-        function renderQuestion() {
-            const q = currentQuestions[currentIndex];
-            document.getElementById('quiz-progress').innerText = `Câu ${currentIndex + 1} / ${currentQuestions.length} (${q.chapter})`;
-            document.getElementById('question-container').innerText = q.question;
-
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-
-            q.options.forEach((opt, idx) => {
-                const item = document.createElement('label');
-                item.className = 'option-item';
-                
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = 'question-option';
-                radio.value = idx;
-                radio.checked = userAnswers[currentIndex] === idx;
-
-                if (currentMode === 'practice' && userAnswers[currentIndex] !== undefined) {
-                    radio.disabled = true;
-                    if (idx === q.correct) {
-                        item.classList.add('correct');
-                    } else if (idx === userAnswers[currentIndex]) {
-                        item.classList.add('incorrect');
-                    }
-                }
-
-                radio.onchange = () => {
-                    handleSelectOption(idx);
-                };
-
-                const span = document.createElement('span');
-                span.innerText = opt;
-
-                item.appendChild(radio);
-                item.appendChild(span);
-                optionsContainer.appendChild(item);
-            });
-
-            const nextBtn = document.getElementById('next-btn');
-            if (currentIndex === currentQuestions.length - 1) {
-                nextBtn.innerText = 'Nộp bài';
-            } else {
-                nextBtn.innerText = 'Câu sau';
-            }
-
-            document.getElementById('prev-btn').style.display = currentIndex === 0 ? 'none' : 'block';
-        }
-
-        // Handle option selection
-        function handleSelectOption(idx) {
-            userAnswers[currentIndex] = idx;
-            if (currentMode === 'practice') {
-                renderQuestion();
-            }
-        }
-
-        // Navigation
-        function nextQuestion() {
-            if (currentIndex < currentQuestions.length - 1) {
-                currentIndex++;
-                renderQuestion();
-            } else {
-                // Hiển thị Modal xác nhận nộp bài tùy chỉnh
-                document.getElementById('submit-confirm-modal').classList.remove('hidden');
-            }
-        }
-
-        function closeSubmitConfirmModal() {
-            document.getElementById('submit-confirm-modal').classList.add('hidden');
-        }
-
-        function acceptSubmitQuiz() {
-            closeSubmitConfirmModal();
-            finishQuiz();
-        }
-
-        function prevQuestion() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderQuestion();
-            }
-        }
-
-        // Finish quiz & calculate score
-        function finishQuiz() {
-            if (timerInterval) clearInterval(timerInterval);
-
-            let correctCount = 0;
-            let wrongQuestionsList = JSON.parse(localStorage.getItem('ktct_wrong_questions') || '[]');
-            let detailedResults = [];
-
-            currentQuestions.forEach((q, idx) => {
-                const userAnsIdx = userAnswers[idx];
-                const isCorrect = userAnsIdx === q.correct;
-                if (isCorrect) {
-                    correctCount++;
-                    wrongQuestionsList = wrongQuestionsList.filter(item => item !== q.question);
-                } else {
-                    if (!wrongQuestionsList.includes(q.question)) {
-                        wrongQuestionsList.push(q.question);
-                    }
-                }
-
-                detailedResults.push({
-                    questionNumber: idx + 1,
-                    chapter: q.chapter,
-                    question: q.question,
-                    userAnswer: userAnsIdx !== undefined ? q.options[userAnsIdx] : 'Chưa trả lời',
-                    correctAnswer: q.options[q.correct],
-                    isCorrect: isCorrect
-                });
-            });
-
-            localStorage.setItem('ktct_wrong_questions', JSON.stringify(wrongQuestionsList));
-
-            let totalQ = currentQuestions.length;
-            let percentage = ((correctCount / totalQ) * 100).toFixed(1);
-
-            let allHistories = JSON.parse(localStorage.getItem('ktct_student_histories') || '{}');
-            if (!allHistories[currentStudentName]) {
-                allHistories[currentStudentName] = [];
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('thu-ngay-lap').value = today;
+            document.getElementById('chi-ngay-lap').value = today;
+            document.getElementById('nk-ngay-lap').value = today;
+            document.getElementById('nk-ngay-chung-tu').value = today;
+            document.getElementById('xk-ngay-lap').value = today;
             
-            let modeNameLabel = 'Thi thử';
-            if (currentMode === 'practice') modeNameLabel = 'Luyện tập';
-            else if (currentMode === 'wrong') modeNameLabel = 'Ôn câu sai';
-            else if (currentMode === 'chapter') modeNameLabel = 'Ôn theo chương';
-            else if (currentMode === 'random') modeNameLabel = `Ôn ngẫu nhiên (${totalQ} câu)`;
+            updatePreviewThu();
+            updatePreviewChi();
+            updatePreviewNhapKho();
+            updatePreviewXuatKho();
+        });
 
-            let newRecord = {
-                mode: modeNameLabel,
-                score: `${correctCount}/${totalQ} (${percentage}%)`,
-                date: new Date().toLocaleString('vi-VN')
+        function switchView(viewName) {
+            ['home', 'thu', 'chi', 'nhapkho', 'xuatkho'].forEach(v => {
+                let viewEl = document.getElementById('view-' + v);
+                if (viewEl) viewEl.classList.add('hidden');
+                let btn = document.getElementById('nav-btn-' + v);
+                if (btn) {
+                    btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center bg-indigo-950 text-indigo-200 border border-indigo-700 hover:bg-indigo-850";
+                }
+            });
+
+            let targetView = document.getElementById('view-' + viewName);
+            if (targetView) targetView.classList.remove('hidden');
+
+            let activeBtn = document.getElementById('nav-btn-' + viewName);
+            if (activeBtn) {
+                let colors = { 
+                    home: 'bg-indigo-800 text-white shadow-inner', 
+                    thu: 'bg-emerald-600 text-white shadow', 
+                    chi: 'bg-amber-600 text-white shadow', 
+                    nhapkho: 'bg-cyan-600 text-white shadow', 
+                    xuatkho: 'bg-purple-600 text-white shadow' 
+                };
+                activeBtn.className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center ${colors[viewName]}`;
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function docSoThanhChu(so) {
+            if (so === 0 || isNaN(so)) return "Không đồng";
+            const chuSo = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+            const docBlock = function(bas, chucDau) {
+                let tram = Math.floor(bas / 100);
+                let chuc = Math.floor((bas % 100) / 10);
+                let donVi = bas % 10;
+                let ketQua = "";
+                if (tram === 0 && chucDau) { ketQua += " không trăm"; } 
+                else if (tram !== 0) { ketQua += " " + chuSo[tram] + " trăm"; }
+                if (chuc === 0 && donVi !== 0 && (tram !== 0 || chucDau)) { ketQua += " lẻ"; } 
+                else if (chuc === 1) { ketQua += " mười"; } 
+                else if (chuc > 1) { ketQua += " " + chuSo[chuc] + " mươi"; }
+                if (donVi === 1 && chuc > 1) { ketQua += " mốt"; } 
+                else if (donVi === 5 && chuc > 0) { ketQua += " lăm"; } 
+                else if (donVi !== 0) { ketQua += " " + chuSo[donVi]; }
+                return ketQua;
             };
 
-            allHistories[currentStudentName].unshift(newRecord);
-            localStorage.setItem('ktct_student_histories', JSON.stringify(allHistories));
+            let ty = Math.floor(so / 1000000000);
+            so %= 1000000000;
+            let trieu = Math.floor(so / 1000000);
+            so %= 1000000;
+            let nghin = Math.floor(so / 1000);
+            let tram = so % 1000;
 
-            // Tự động lưu vào danh sách lịch sử tổng hợp chung của thiết bị để xem trực tiếp không cần lọc tên
-            let globalDeviceHistory = JSON.parse(localStorage.getItem('ktct_device_global_history') || '[]');
-            globalDeviceHistory.unshift({
-                studentName: currentStudentName,
-                mode: modeNameLabel,
-                score: `${correctCount}/${totalQ} (${percentage}%)`,
-                date: new Date().toLocaleString('vi-VN')
-            });
-            localStorage.setItem('ktct_device_global_history', JSON.stringify(globalDeviceHistory));
+            let kqStr = "";
+            if (ty > 0) kqStr += docBlock(ty, false) + " tỷ";
+            if (trieu > 0) kqStr += docBlock(trieu, ty > 0) + " triệu";
+            if (nghin > 0) kqStr += docBlock(nghin, ty > 0 || trieu > 0) + " nghìn";
+            if (tram > 0) kqStr += docBlock(tram, ty > 0 || trieu > 0 || nghin > 0);
+            else if (kqStr === "") kqStr = " không";
 
-            switchView('result');
-            document.getElementById('score-circle').innerHTML = `${correctCount}/${totalQ}<span id="score-percent">${percentage}%</span>`;
-            document.getElementById('result-detail').innerText = `Thí sinh: ${currentStudentName}\nBạn đã trả lời đúng ${correctCount} trên tổng số ${totalQ} câu hỏi, đạt tỷ lệ ${percentage}%.`;
-
-            // Hiển thị chi tiết từng câu hỏi tại trang trả điểm
-            const detailsContainer = document.getElementById('result-details-container');
-            detailsContainer.innerHTML = '';
-
-            detailedResults.forEach(item => {
-                const div = document.createElement('div');
-                div.className = `detail-item ${item.isCorrect ? 'is-correct' : 'is-incorrect'}`;
-                
-                div.innerHTML = `
-                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--primary);">
-                        Câu ${item.questionNumber} (${item.chapter}): ${item.isCorrect ? '<span style="color: var(--success);">✔ Đúng</span>' : '<span style="color: var(--danger);">✖ Sai</span>'}
-                    </div>
-                    <div style="margin-bottom: 0.5rem; font-weight: 500;">${item.question}</div>
-                    <div style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.25rem;">
-                        - Đáp án bạn chọn: <strong style="color: ${item.isCorrect ? 'var(--success)' : 'var(--danger)'};">${item.userAnswer}</strong>
-                    </div>
-                    ${!item.isCorrect ? `<div style="font-size: 0.9rem; color: var(--text-light);">- Đáp án đúng: <strong style="color: var(--success);">${item.correctAnswer}</strong></div>` : ''}
-                `;
-                detailsContainer.appendChild(div);
-            });
+            kqStr = kqStr.trim() + " đồng chẵn.";
+            return kqStr.charAt(0).toUpperCase() + kqStr.slice(1);
         }
 
-        // Tự động render Lịch sử bài làm trên thiết bị
-        function renderDeviceHistory() {
-            const container = document.getElementById('history-content');
-            const clearContainer = document.getElementById('clear-history-container');
-            let globalDeviceHistory = JSON.parse(localStorage.getItem('ktct_device_global_history') || '[]');
-
-            if (globalDeviceHistory.length === 0) {
-                container.innerHTML = `<p style="color: var(--text-light); text-align: center; padding: 2rem 0;">Chưa có lịch sử bài làm nào được hệ thống ghi nhận trên thiết bị này.</p>`;
-                clearContainer.classList.add('hidden');
-                return;
+        // ================= THU & CHI =================
+        function formatAndConvertMoneyThu() {
+            let rawVal = document.getElementById('thu-so-tien').value.replace(/\D/g, '');
+            let num = parseInt(rawVal || '0', 10);
+            document.getElementById('thu-so-tien').value = num.toLocaleString('vi-VN');
+            document.getElementById('thu-so-tien-chu-preview').innerText = "Bằng chữ: " + docSoThanhChu(num);
+            updatePreviewThu();
+        }
+        function updatePreviewThu() {
+            document.getElementById('prev-thu-so').innerText = document.getElementById('thu-so-phieu').value || '...';
+            document.getElementById('prev-thu-no').innerText = document.getElementById('thu-tk-no').value || '...';
+            document.getElementById('prev-thu-co').innerText = document.getElementById('thu-tk-co').value || '...';
+            document.getElementById('prev-thu-nguoinop').innerText = document.getElementById('thu-nguoi-nop').value;
+            document.getElementById('prev-thu-sig-nguoinop').innerText = document.getElementById('thu-nguoi-nop').value;
+            document.getElementById('prev-thu-diachi').innerText = document.getElementById('thu-dia-chi').value;
+            document.getElementById('prev-thu-lydo').innerText = document.getElementById('thu-ly-do').value;
+            let num = parseInt(document.getElementById('thu-so-tien').value.replace(/\D/g, '') || '0', 10);
+            document.getElementById('prev-thu-sotien').innerText = num.toLocaleString('vi-VN') + " VNĐ";
+            let words = docSoThanhChu(num);
+            document.getElementById('prev-thu-sotienchu').innerText = words;
+            document.getElementById('prev-thu-chungtu').innerText = document.getElementById('thu-chung-tu').value;
+            let dVal = document.getElementById('thu-ngay-lap').value;
+            if (dVal) {
+                let [y, m, d] = dVal.split('-');
+                let str = `Ngày ${d} tháng ${m} năm ${y}`;
+                document.getElementById('prev-thu-ngaythang').innerText = str;
+                document.getElementById('prev-thu-ngayky').innerText = str;
             }
+            document.getElementById('prev-thu-sig-lap').innerText = document.getElementById('thu-sig-lap').value;
+            document.getElementById('prev-thu-sig-ketoan').innerText = document.getElementById('thu-sig-ketoan').value;
+            document.getElementById('prev-thu-sig-thuquy').innerText = document.getElementById('thu-sig-thuquy').value;
+            document.getElementById('prev-thu-sig-giamdoc').innerText = document.getElementById('thu-sig-giamdoc').value;
+        }
+        function resetFormThu() {
+            document.getElementById('form-thu-data').reset();
+            document.getElementById('thu-ngay-lap').value = new Date().toISOString().split('T')[0];
+            document.getElementById('thu-so-tien').value = "5.200.000";
+            formatAndConvertMoneyThu();
+        }
 
-            clearContainer.classList.remove('hidden');
-            let html = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Họ và Tên</th>
-                            <th>Chế độ</th>
-                            <th>Kết quả</th>
-                            <th>Thời gian</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        function formatAndConvertMoneyChi() {
+            let rawVal = document.getElementById('chi-so-tien').value.replace(/\D/g, '');
+            let num = parseInt(rawVal || '0', 10);
+            document.getElementById('chi-so-tien').value = num.toLocaleString('vi-VN');
+            document.getElementById('chi-so-tien-chu-preview').innerText = "Bằng chữ: " + docSoThanhChu(num);
+            updatePreviewChi();
+        }
+        function updatePreviewChi() {
+            document.getElementById('prev-chi-so').innerText = document.getElementById('chi-so-phieu').value || '...';
+            document.getElementById('prev-chi-no').innerText = document.getElementById('chi-tk-no').value || '...';
+            document.getElementById('prev-chi-co').innerText = document.getElementById('chi-tk-co').value || '...';
+            document.getElementById('prev-chi-nguoinhan').innerText = document.getElementById('chi-nguoi-nhan').value;
+            document.getElementById('prev-chi-sig-nguoinhan').innerText = document.getElementById('chi-nguoi-nhan').value;
+            document.getElementById('prev-chi-diachi').innerText = document.getElementById('chi-dia-chi').value;
+            document.getElementById('prev-chi-lydo').innerText = document.getElementById('chi-ly-do').value;
+            let num = parseInt(document.getElementById('chi-so-tien').value.replace(/\D/g, '') || '0', 10);
+            document.getElementById('prev-chi-sotien').innerText = num.toLocaleString('vi-VN') + " VNĐ";
+            let words = docSoThanhChu(num);
+            document.getElementById('prev-chi-sotienchu').innerText = words;
+            document.getElementById('prev-chi-chungtu').innerText = document.getElementById('chi-chung-tu').value;
+            let dVal = document.getElementById('chi-ngay-lap').value;
+            if (dVal) {
+                let [y, m, d] = dVal.split('-');
+                let str = `Ngày ${d} tháng ${m} năm ${y}`;
+                document.getElementById('prev-chi-ngaythang').innerText = str;
+                document.getElementById('prev-chi-ngayky').innerText = str;
+            }
+            document.getElementById('prev-chi-sig-lap').innerText = document.getElementById('chi-sig-lap').value;
+            document.getElementById('prev-chi-sig-ketoan').innerText = document.getElementById('chi-sig-ketoan').value;
+            document.getElementById('prev-chi-sig-thuquy').innerText = document.getElementById('chi-sig-thuquy').value;
+            document.getElementById('prev-chi-sig-giamdoc').innerText = document.getElementById('chi-sig-giamdoc').value;
+        }
+        function resetFormChi() {
+            document.getElementById('form-chi-data').reset();
+            document.getElementById('chi-ngay-lap').value = new Date().toISOString().split('T')[0];
+            document.getElementById('chi-so-tien').value = "1.550.000";
+            formatAndConvertMoneyChi();
+        }
+
+        // ================= XỬ LÝ DÒNG VẬT TƯ (NHẬP / XUẤT KHO) =================
+        function formatItemMoney(input) {
+            let raw = input.value.replace(/\D/g, '');
+            let num = parseInt(raw || '0', 10);
+            input.value = num.toLocaleString('vi-VN');
+        }
+
+        function addVTuRow(type) {
+            let containerId = type === 'nhap' ? 'container-items-nhap' : 'container-items-xuat';
+            let container = document.getElementById(containerId);
+            let rowCount = container.children.length + 1;
+            
+            let div = document.createElement('div');
+            div.className = `item-row-${type} bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-2 text-xs`;
+            div.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="font-bold text-${type === 'nhap' ? 'cyan' : 'purple'}-800 item-stt">#${rowCount}</span>
+                    <button type="button" onclick="removeVTuRow(this, '${type}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+                <input type="text" placeholder="Tên, nhãn hiệu, quy cách hàng hóa" class="item-ten w-full px-2 py-1.5 border border-slate-300 rounded bg-white" oninput="updatePreview${type === 'nhap' ? 'NhapKho' : 'XuatKho'}()">
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="text" placeholder="Mã số" class="item-maso px-2 py-1 border border-slate-300 rounded bg-white" oninput="updatePreview${type === 'nhap' ? 'NhapKho' : 'XuatKho'}()">
+                    <input type="text" placeholder="ĐVT" value="Cái" class="item-dvt px-2 py-1 border border-slate-300 rounded bg-white" oninput="updatePreview${type === 'nhap' ? 'NhapKho' : 'XuatKho'}()">
+                    <input type="number" placeholder="${type === 'nhap' ? 'SL CT' : 'SL Yêu cầu'}" value="10" class="${type === 'nhap' ? 'item-slct' : 'item-slreq'} px-2 py-1 border border-slate-300 rounded bg-white" oninput="updatePreview${type === 'nhap' ? 'NhapKho' : 'XuatKho'}()">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] text-slate-500">Thực ${type}:</label>
+                        <input type="number" value="10" class="item-sltt w-full px-2 py-1 border border-slate-300 rounded bg-white font-semibold text-${type === 'nhap' ? 'cyan' : 'purple'}-700" oninput="updatePreview${type === 'nhap' ? 'NhapKho' : 'XuatKho'}()">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-500">Đơn giá (VNĐ):</label>
+                        <input type="text" value="100.000" class="item-dongia w-full px-2 py-1 border border-slate-300 rounded bg-white font-semibold" oninput="formatItemMoney(this); updatePreview${type === 'nhap' ? 'NhapKho' : 'XuatKho'}()">
+                    </div>
+                </div>
             `;
+            container.appendChild(div);
+            if(type === 'nhap') updatePreviewNhapKho(); else updatePreviewXuatKho();
+        }
 
-            globalDeviceHistory.forEach(item => {
-                html += `
-                    <tr>
-                        <td><strong>${item.studentName}</strong></td>
-                        <td>${item.mode}</td>
-                        <td><strong style="color: var(--primary);">${item.score}</strong></td>
-                        <td>${item.date}</td>
-                    </tr>
+        function removeVTuRow(btn, type) {
+            let row = btn.closest(`.item-row-${type}`);
+            row.remove();
+            let container = document.getElementById(type === 'nhap' ? 'container-items-nhap' : 'container-items-xuat');
+            Array.from(container.children).forEach((child, idx) => {
+                child.querySelector('.item-stt').innerText = `#${idx + 1}`;
+            });
+            if(type === 'nhap') updatePreviewNhapKho(); else updatePreviewXuatKho();
+        }
+
+        // ================= XỬ LÝ PHIẾU NHẬP KHO =================
+        function updatePreviewNhapKho() {
+            document.getElementById('prev-nk-so').innerText = document.getElementById('nk-so-phieu').value || '...';
+            document.getElementById('prev-nk-no').innerText = document.getElementById('nk-tk-no').value || '...';
+            document.getElementById('prev-nk-co').innerText = document.getElementById('nk-tk-co').value || '...';
+            document.getElementById('prev-nk-nguoigiao').innerText = document.getElementById('nk-nguoi-giao').value || '...';
+            document.getElementById('prev-nk-sig-nguoigiao').innerText = document.getElementById('nk-nguoi-giao').value || '...';
+            document.getElementById('prev-nk-hoadon').innerText = document.getElementById('nk-theo-chung-tu').value || '...';
+            document.getElementById('prev-nk-khonhap').innerText = document.getElementById('nk-kho-nhap').value || '...';
+
+            let dVal = document.getElementById('nk-ngay-lap').value;
+            if (dVal) {
+                let [y, m, d] = dVal.split('-');
+                let str = `Ngày ${d} tháng ${m} năm ${y}`;
+                document.getElementById('prev-nk-ngaythang').innerText = str;
+                document.getElementById('prev-nk-ngayky').innerText = str;
+            }
+            let dHdVal = document.getElementById('nk-ngay-chung-tu').value;
+            if (dHdVal) {
+                let [y, m, d] = dHdVal.split('-');
+                document.getElementById('prev-nk-ngayhd').innerText = `${d}/${m}/${y}`;
+            }
+
+            let rows = document.querySelectorAll('.item-row-nhap');
+            let tbody = document.getElementById('prev-nk-tbody');
+            tbody.innerHTML = '';
+            let grandTotal = 0;
+
+            rows.forEach((row, index) => {
+                let ten = row.querySelector('.item-ten').value || '';
+                let maso = row.querySelector('.item-maso').value || '';
+                let dvt = row.querySelector('.item-dvt').value || '';
+                let slct = parseFloat(row.querySelector('.item-slct').value) || 0;
+                let sltt = parseFloat(row.querySelector('.item-sltt').value) || 0;
+                let dg = parseFloat(row.querySelector('.item-dongia').value.replace(/\D/g, '') || '0');
+                let thanhTien = sltt * dg;
+                grandTotal += thanhTien;
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="border border-black p-1.5 text-center">${index + 1}</td>
+                    <td class="border border-black p-1.5">${ten}</td>
+                    <td class="border border-black p-1.5 text-center">${maso}</td>
+                    <td class="border border-black p-1.5 text-center">${dvt}</td>
+                    <td class="border border-black p-1.5 text-center">${slct}</td>
+                    <td class="border border-black p-1.5 text-center font-bold">${sltt}</td>
+                    <td class="border border-black p-1.5 text-right">${dg.toLocaleString('vi-VN')}</td>
+                    <td class="border border-black p-1.5 text-right font-bold">${thanhTien.toLocaleString('vi-VN')}</td>
                 `;
+                tbody.appendChild(tr);
             });
 
-            html += `</tbody></table>`;
-            container.innerHTML = html;
+            document.getElementById('prev-nk-tongtien').innerText = grandTotal.toLocaleString('vi-VN') + " VNĐ";
+            let words = docSoThanhChu(grandTotal);
+            document.getElementById('prev-nk-sotienchu').innerText = words;
+
+            document.getElementById('prev-nk-sig-lap').innerText = document.getElementById('nk-sig-lap').value;
+            document.getElementById('prev-nk-sig-thukho').innerText = document.getElementById('nk-sig-thukho').value;
+            document.getElementById('prev-nk-sig-ketoan').innerText = document.getElementById('nk-sig-ketoan').value;
         }
 
-        function clearAllHistory() {
-            if (confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài làm đã ghi nhận trên thiết bị này không?')) {
-                localStorage.removeItem('ktct_device_global_history');
-                localStorage.removeItem('ktct_student_histories');
-                renderDeviceHistory();
+        function resetFormNhapKho() {
+            document.getElementById('form-nhapkho-data').reset();
+            document.getElementById('nk-ngay-lap').value = new Date().toISOString().split('T')[0];
+            document.getElementById('nk-ngay-chung-tu').value = new Date().toISOString().split('T')[0];
+            updatePreviewNhapKho();
+        }
+
+        // ================= XỬ LÝ PHIẾU XUẤT KHO =================
+        function updatePreviewXuatKho() {
+            document.getElementById('prev-xk-so').innerText = document.getElementById('xk-so-phieu').value || '...';
+            document.getElementById('prev-xk-no').innerText = document.getElementById('xk-tk-no').value || '...';
+            document.getElementById('prev-xk-co').innerText = document.getElementById('xk-tk-co').value || '...';
+            document.getElementById('prev-xk-nguoinhan').innerText = document.getElementById('xk-nguoi-nhan').value || '...';
+            document.getElementById('prev-xk-sig-nguoinhan').innerText = document.getElementById('xk-nguoi-nhan').value || '...';
+            document.getElementById('prev-xk-lydo').innerText = document.getElementById('xk-ly-do').value || '...';
+            document.getElementById('prev-xk-khoxuat').innerText = document.getElementById('xk-kho-xuat').value || '...';
+
+            let dVal = document.getElementById('xk-ngay-lap').value;
+            if (dVal) {
+                let [y, m, d] = dVal.split('-');
+                let str = `Ngày ${d} tháng ${m} năm ${y}`;
+                document.getElementById('prev-xk-ngaythang').innerText = str;
+                document.getElementById('prev-xk-ngayky').innerText = str;
             }
+
+            let rows = document.querySelectorAll('.item-row-xuat');
+            let tbody = document.getElementById('prev-xk-tbody');
+            tbody.innerHTML = '';
+            let grandTotal = 0;
+
+            rows.forEach((row, index) => {
+                let ten = row.querySelector('.item-ten').value || '';
+                let maso = row.querySelector('.item-maso').value || '';
+                let dvt = row.querySelector('.item-dvt').value || '';
+                let slreq = parseFloat(row.querySelector('.item-slreq').value) || 0;
+                let sltt = parseFloat(row.querySelector('.item-sltt').value) || 0;
+                let dg = parseFloat(row.querySelector('.item-dongia').value.replace(/\D/g, '') || '0');
+                let thanhTien = sltt * dg;
+                grandTotal += thanhTien;
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="border border-black p-1.5 text-center">${index + 1}</td>
+                    <td class="border border-black p-1.5">${ten}</td>
+                    <td class="border border-black p-1.5 text-center">${maso}</td>
+                    <td class="border border-black p-1.5 text-center">${dvt}</td>
+                    <td class="border border-black p-1.5 text-center">${slreq}</td>
+                    <td class="border border-black p-1.5 text-center font-bold">${sltt}</td>
+                    <td class="border border-black p-1.5 text-right">${dg.toLocaleString('vi-VN')}</td>
+                    <td class="border border-black p-1.5 text-right font-bold">${thanhTien.toLocaleString('vi-VN')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('prev-xk-tongtien').innerText = grandTotal.toLocaleString('vi-VN') + " VNĐ";
+            let words = docSoThanhChu(grandTotal);
+            document.getElementById('prev-xk-sotienchu').innerText = words;
+
+            document.getElementById('prev-xk-sig-lap').innerText = document.getElementById('xk-sig-lap').value;
+            document.getElementById('prev-xk-sig-thukho').innerText = document.getElementById('xk-sig-thukho').value;
+            document.getElementById('prev-xk-sig-ketoan').innerText = document.getElementById('xk-sig-ketoan').value;
         }
 
-        updateWrongCountText();
+        function resetFormXuatKho() {
+            document.getElementById('form-xuatkho-data').reset();
+            document.getElementById('xk-ngay-lap').value = new Date().toISOString().split('T')[0];
+            updatePreviewXuatKho();
+        }
+
+        // ================= XUẤT EXCEL / WORD / IN ẤN =================
+        function printVoucher(elementId) {
+            window.print();
+        }
+
+        function exportExcelThu() {
+            let wb = XLSX.utils.book_new();
+            let data = [
+                ["CÔNG TY TNHH THỜI TRANG DB", "", "", "", "MẪU SỐ 01 - TT"],
+                ["Địa chỉ: Số 125 Nguyễn Văn Linh, Phường Tân Thuận, TP. Hồ Chí Minh", "", "", "", "(Kèm theo Thông tư số 99/2025/TT-BTC)"],
+                ["", "", "", "", ""],
+                ["", "", "PHIẾU THU", "", ""],
+                ["", "", `Ngày ${document.getElementById('thu-ngay-lap').value.split('-').reverse().join(' tháng ')} năm ${document.getElementById('thu-ngay-lap').value.split('-')[0]}`, "", ""],
+                ["", "", `Số: ${document.getElementById('thu-so-phieu').value} | Nợ: ${document.getElementById('thu-tk-no').value} | Có: ${document.getElementById('thu-tk-co').value}`, "", ""],
+                ["", "", "", "", ""],
+                ["Họ tên người nộp tiền:", document.getElementById('thu-nguoi-nop').value, "", "", ""],
+                ["Địa chỉ:", document.getElementById('thu-dia-chi').value, "", "", ""],
+                ["Lý do nộp:", document.getElementById('thu-ly-do').value, "", "", ""],
+                ["Số tiền:", document.getElementById('thu-so-tien').value + " VNĐ", "", "", ""],
+                ["Viết bằng chữ:", document.getElementById('thu-so-tien-chu-preview').innerText.replace("Bằng chữ: ", ""), "", "", ""],
+                ["Chứng từ gốc kèm theo:", document.getElementById('thu-chung-tu').value, "", "", ""],
+                ["", "", "", "", ""],
+                ["Giám đốc", "Kế toán trưởng", "Người nộp tiền", "Người lập phiếu", "Thủ quỹ"],
+                ["(Ký, đóng dấu)", "(Ký, họ tên)", "(Ký, họ tên)", "(Ký, họ tên)", "(Ký, họ tên)"]
+            ];
+            let ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, "PhieuThu");
+            XLSX.writeFile(wb, `PhieuThu_${document.getElementById('thu-so-phieu').value}.xlsx`);
+        }
+
+        function exportExcelChi() {
+            let wb = XLSX.utils.book_new();
+            let data = [
+                ["CÔNG TY TNHH THỜI TRANG DB", "", "", "", "MẪU SỐ 02 - TT"],
+                ["Địa chỉ: Số 125 Nguyễn Văn Linh, Phường Tân Thuận, TP. Hồ Chí Minh", "", "", "", "(Kèm theo Thông tư số 99/2025/TT-BTC)"],
+                ["", "", "", "", ""],
+                ["", "", "PHIẾU CHI", "", ""],
+                ["", "", `Ngày ${document.getElementById('chi-ngay-lap').value.split('-').reverse().join(' tháng ')} năm ${document.getElementById('chi-ngay-lap').value.split('-')[0]}`, "", ""],
+                ["", "", `Số: ${document.getElementById('chi-so-phieu').value} | Nợ: ${document.getElementById('chi-tk-no').value} | Có: ${document.getElementById('chi-tk-co').value}`, "", ""],
+                ["", "", "", "", ""],
+                ["Họ tên người nhận tiền:", document.getElementById('chi-nguoi-nhan').value, "", "", ""],
+                ["Địa chỉ:", document.getElementById('chi-dia-chi').value, "", "", ""],
+                ["Lý do chi:", document.getElementById('chi-ly-do').value, "", "", ""],
+                ["Số tiền:", document.getElementById('chi-so-tien').value + " VNĐ", "", "", ""],
+                ["Viết bằng chữ:", document.getElementById('chi-so-tien-chu-preview').innerText.replace("Bằng chữ: ", ""), "", "", ""],
+                ["Chứng từ gốc kèm theo:", document.getElementById('chi-chung-tu').value, "", "", ""],
+                ["", "", "", "", ""],
+                ["Giám đốc", "Kế toán trưởng", "Thủ quỹ", "Người lập phiếu", "Người nhận tiền"],
+                ["(Ký, đóng dấu)", "(Ký, họ tên)", "(Ký, họ tên)", "(Ký, họ tên)", "(Ký, họ tên)"]
+            ];
+            let ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, "PhieuChi");
+            XLSX.writeFile(wb, `PhieuChi_${document.getElementById('chi-so-phieu').value}.xlsx`);
+        }
+
+        function exportExcelNhapKho() {
+            let wb = XLSX.utils.book_new();
+            let rows = [
+                ["CÔNG TY TNHH THỜI TRANG DB", "", "", "", "", "", "", "MẪU SỐ 01 - VT"],
+                ["Địa chỉ: Số 125 Nguyễn Văn Linh, Phường Tân Thuận, TP. Hồ Chí Minh", "", "", "", "", "", "", "(Kèm theo Thông tư số 99/2025/TT-BTC)"],
+                ["", "", "", "", "", "", "", ""],
+                ["", "", "PHIẾU NHẬP KHO", "", "", "", "", ""],
+                ["", "", `Số: ${document.getElementById('nk-so-phieu').value} | Nợ: ${document.getElementById('nk-tk-no').value} | Có: ${document.getElementById('nk-tk-co').value}`, "", "", "", "", ""],
+                ["", "", "", "", "", "", "", ""],
+                ["Người giao hàng:", document.getElementById('nk-nguoi-giao').value, "", "", "", "", "", ""],
+                ["Theo hóa đơn:", document.getElementById('nk-theo-chung-tu').value, "", "", "", "", "", ""],
+                ["Nhập tại kho:", document.getElementById('nk-kho-nhap').value, "", "", "", "", "", ""],
+                ["", "", "", "", "", "", "", ""],
+                ["STT", "Tên quy cách vật tư", "Mã số", "ĐVT", "Theo CT", "Thực nhập", "Đơn giá", "Thành tiền"]
+            ];
+            
+            let itemRows = document.querySelectorAll('.item-row-nhap');
+            itemRows.forEach((r, idx) => {
+                let ten = r.querySelector('.item-ten').value;
+                let maso = r.querySelector('.item-maso').value;
+                let dvt = r.querySelector('.item-dvt').value;
+                let slct = r.querySelector('.item-slct').value;
+                let sltt = r.querySelector('.item-sltt').value;
+                let dg = r.querySelector('.item-dongia').value;
+                let tt = (parseFloat(sltt || 0) * parseFloat(dg.replace(/\D/g,'') || 0)).toLocaleString('vi-VN');
+                rows.push([idx + 1, ten, maso, dvt, slct, sltt, dg, tt]);
+            });
+
+            rows.push(["", "", "", "", "", "", "CỘNG TỔNG:", document.getElementById('prev-nk-tongtien').innerText]);
+            rows.push(["", "", "", "", "", "", "", ""]);
+            rows.push(["Người lập phiếu", "Người giao hàng", "Thủ kho", "Kế toán trưởng", "", "", "", ""]);
+
+            let ws = XLSX.utils.aoa_to_sheet(rows);
+            XLSX.utils.book_append_sheet(wb, ws, "PhieuNhapKho");
+            XLSX.writeFile(wb, `PhieuNhapKho_${document.getElementById('nk-so-phieu').value}.xlsx`);
+        }
+
+        function exportExcelXuatKho() {
+            let wb = XLSX.utils.book_new();
+            let rows = [
+                ["CÔNG TY TNHH THỜI TRANG DB", "", "", "", "", "", "", "MẪU SỐ 02 - VT"],
+                ["Địa chỉ: Số 125 Nguyễn Văn Linh, Phường Tân Thuận, TP. Hồ Chí Minh", "", "", "", "", "", "", "(Kèm theo Thông tư số 99/2025/TT-BTC)"],
+                ["", "", "", "", "", "", "", ""],
+                ["", "", "PHIẾU XUẤT KHO", "", "", "", "", ""],
+                ["", "", `Số: ${document.getElementById('xk-so-phieu').value} | Nợ: ${document.getElementById('xk-tk-no').value} | Có: ${document.getElementById('xk-tk-co').value}`, "", "", "", "", ""],
+                ["", "", "", "", "", "", "", ""],
+                ["Người nhận hàng:", document.getElementById('xk-nguoi-nhan').value, "", "", "", "", "", ""],
+                ["Lý do xuất:", document.getElementById('xk-ly-do').value, "", "", "", "", "", ""],
+                ["Xuất tại kho:", document.getElementById('xk-kho-xuat').value, "", "", "", "", "", ""],
+                ["", "", "", "", "", "", "", ""],
+                ["STT", "Tên quy cách vật tư", "Mã số", "ĐVT", "Yêu cầu", "Thực xuất", "Đơn giá", "Thành tiền"]
+            ];
+            
+            let itemRows = document.querySelectorAll('.item-row-xuat');
+            itemRows.forEach((r, idx) => {
+                let ten = r.querySelector('.item-ten').value;
+                let maso = r.querySelector('.item-maso').value;
+                let dvt = r.querySelector('.item-dvt').value;
+                let slreq = r.querySelector('.item-slreq').value;
+                let sltt = r.querySelector('.item-sltt').value;
+                let dg = r.querySelector('.item-dongia').value;
+                let tt = (parseFloat(sltt || 0) * parseFloat(dg.replace(/\D/g,'') || 0)).toLocaleString('vi-VN');
+                rows.push([idx + 1, ten, maso, dvt, slreq, sltt, dg, tt]);
+            });
+
+            rows.push(["", "", "", "", "", "", "CỘNG TỔNG:", document.getElementById('prev-xk-tongtien').innerText]);
+            rows.push(["", "", "", "", "", "", "", ""]);
+            rows.push(["Người lập phiếu", "Người nhận hàng", "Thủ kho", "Kế toán trưởng", "", "", "", ""]);
+
+            let ws = XLSX.utils.aoa_to_sheet(rows);
+            XLSX.utils.book_append_sheet(wb, ws, "PhieuXuatKho");
+            XLSX.writeFile(wb, `PhieuXuatKho_${document.getElementById('xk-so-phieu').value}.xlsx`);
+        }
+
+        function exportWordThu() {
+            let htmlContent = `<html><head><meta charset='utf-8'></head><body style='font-family: "Times New Roman"; font-size: 13pt;'>${document.getElementById('printable-voucher-thu').innerHTML}</body></html>`;
+            let converted = htmlDocx.asBlob(htmlContent);
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(converted);
+            link.download = `PhieuThu_${document.getElementById('thu-so-phieu').value}.docx`;
+            link.click();
+        }
+
+        function exportWordChi() {
+            let htmlContent = `<html><head><meta charset='utf-8'></head><style>table{width:100%; border-collapse: collapse;} th, td{border: 1px solid black; padding: 5px;}</style><body style='font-family: "Times New Roman"; font-size: 13pt;'>${document.getElementById('printable-voucher-chi').innerHTML}</body></html>`;
+            let converted = htmlDocx.asBlob(htmlContent);
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(converted);
+            link.download = `PhieuChi_${document.getElementById('chi-so-phieu').value}.docx`;
+            link.click();
+        }
+
+        function exportWordNhapKho() {
+            let htmlContent = `<html><head><meta charset='utf-8'></head><style>table{width:100%; border-collapse: collapse;} th, td{border: 1px solid black; padding: 5px;}</style><body style='font-family: "Times New Roman"; font-size: 12pt;'>${document.getElementById('printable-voucher-nhap').innerHTML}</body></html>`;
+            let converted = htmlDocx.asBlob(htmlContent);
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(converted);
+            link.download = `PhieuNhapKho_${document.getElementById('nk-so-phieu').value}.docx`;
+            link.click();
+        }
+
+        function exportWordXuatKho() {
+            let htmlContent = `<html><head><meta charset='utf-8'></head><style>table{width:100%; border-collapse: collapse;} th, td{border: 1px solid black; padding: 5px;}</style><body style='font-family: "Times New Roman"; font-size: 12pt;'>${document.getElementById('printable-voucher-xuat').innerHTML}</body></html>`;
+            let converted = htmlDocx.asBlob(htmlContent);
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(converted);
+            link.download = `PhieuXuatKho_${document.getElementById('xk-so-phieu').value}.docx`;
+            link.click();
+        }
     </script>
 </body>
 </html>
