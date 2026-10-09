@@ -1366,5 +1366,126 @@
             link.click();
         }
     </script>
+
+<!-- ================= TÍNH NĂNG BỔ SUNG: BIÊN BẢN THANH LÝ TSCĐ ================= -->
+<script id="addon-thanh-ly-tscd">
+(function(){
+  const style = document.createElement('style');
+  style.textContent = `#view-thanhly .tl-label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:4px}#view-thanhly .tl-input{width:100%;font-size:13px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;background:white;color:#0f172a}#view-thanhly .tl-section{font-weight:700;font-size:13px;color:#334155;border-bottom:1px solid #e2e8f0;padding-bottom:8px;margin:18px 0 12px}#printable-voucher-thanhly{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.35;color:#000;background:#fff}#printable-voucher-thanhly .tl-line{display:flex;gap:8px;margin:7px 0}#printable-voucher-thanhly .tl-key{min-width:230px}#printable-voucher-thanhly .tl-val{flex:1;border-bottom:1px dotted #333;min-height:18px;white-space:pre-wrap;overflow-wrap:anywhere}#printable-voucher-thanhly .tl-sign{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;text-align:center;margin-top:22px}#printable-voucher-thanhly .tl-signbox{min-height:105px}#printable-voucher-thanhly .tl-signspace{height:58px}@media print{#view-thanhly .no-print{display:none!important}#printable-voucher-thanhly{border:0!important;box-shadow:none!important;padding:0!important;max-width:none!important;width:100%!important}}`;
+  document.head.appendChild(style);
+  const header = document.querySelector('header .flex.flex-wrap.items-center.gap-2');
+  if(header && !document.getElementById('nav-btn-thanhly')) { const b=document.createElement('button'); b.id='nav-btn-thanhly'; b.className='px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-950 text-orange-300 hover:bg-indigo-850 transition flex items-center border border-indigo-700'; b.innerHTML='<i class="fa-solid fa-file-signature mr-1.5"></i> Biên bản thanh lý'; b.onclick=()=>switchView('thanhly'); header.appendChild(b); }
+  const main=document.querySelector('main');
+  const view=document.createElement('div'); view.id='view-thanhly'; view.className='hidden grid grid-cols-1 lg:grid-cols-12 gap-6 tab-transition';
+  view.innerHTML=`
+  <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 no-print flex flex-col">
+    <div class="flex items-center justify-between pb-4 mb-3 border-b border-slate-100"><div class="flex items-center gap-2"><button type="button" onclick="switchView('home')" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-arrow-left"></i></button><h2 class="text-lg font-bold text-orange-800"><i class="fa-solid fa-file-signature mr-2"></i>Biên bản thanh lý TSCĐ</h2></div><button type="button" onclick="resetThanhLy()" class="text-xs text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md">Làm mới</button></div>
+    <form id="form-thanhly" class="space-y-2" onsubmit="return false">
+      <div class="grid grid-cols-2 gap-3"><div><label class="tl-label">Đơn vị</label><input class="tl-input" id="tl-donvi" value="Công ty TNHH Thời trang DB"></div><div><label class="tl-label">Bộ phận</label><input class="tl-input" id="tl-bophan" placeholder="Nhập bộ phận"></div></div>
+      <div class="grid grid-cols-2 gap-3"><div><label class="tl-label">Số biên bản</label><input class="tl-input" id="tl-so" value="BBTL001"></div><div><label class="tl-label">Ngày lập</label><input class="tl-input" id="tl-ngay" type="date"></div></div>
+      <div class="grid grid-cols-2 gap-3"><div><label class="tl-label">Tài khoản Nợ</label><input class="tl-input" id="tl-no" placeholder="Nợ"></div><div><label class="tl-label">Tài khoản Có</label><input class="tl-input" id="tl-co" placeholder="Có"></div></div>
+      <div class="tl-section">Căn cứ và Ban thanh lý</div>
+      <div class="grid grid-cols-2 gap-3"><div><label class="tl-label">Quyết định số</label><input class="tl-input" id="tl-quyetdinh"></div><div><label class="tl-label">Ngày quyết định</label><input class="tl-input" id="tl-ngayqd" type="date"></div></div>
+      <div><label class="tl-label">Đơn vị/người ban hành quyết định</label><input class="tl-input" id="tl-coquanqd"></div>
+      <div class="grid grid-cols-1 gap-2" id="tl-members-form">
+      ${[1,2,3].map((n)=>`<div class="grid grid-cols-3 gap-2"><div><label class="tl-label">${n===1?'Trưởng ban':'Ủy viên'} – Họ tên</label><input class="tl-input" id="tl-tv${n}-ten"></div><div><label class="tl-label">Chức vụ</label><input class="tl-input" id="tl-tv${n}-cv"></div><div><label class="tl-label">Đại diện</label><input class="tl-input" id="tl-tv${n}-dd"></div></div>`).join('')}
+      </div>
+      <div class="tl-section">Thông tin tài sản cố định</div>
+      <div><label class="tl-label">Tên, ký mã hiệu, quy cách (cấp hạng) TSCĐ</label><input class="tl-input" id="tl-tenta"></div>
+      <div class="grid grid-cols-2 gap-3"><div><label class="tl-label">Số hiệu/Mã TSCĐ</label><input class="tl-input" id="tl-mata"></div><div><label class="tl-label">Năm sản xuất</label><input class="tl-input" id="tl-namsx" type="number"></div></div>
+      <div class="grid grid-cols-2 gap-3"><div><label class="tl-label">Năm đưa vào sử dụng</label><input class="tl-input" id="tl-namsd" type="number"></div><div><label class="tl-label">Số thẻ TSCĐ</label><input class="tl-input" id="tl-sothe"></div></div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2"><div><label class="tl-label">Nguyên giá (VNĐ)</label><input class="tl-input" id="tl-nguyengia" type="text" autocomplete="off" placeholder="Nhập số tiền"><p class="text-xs italic text-slate-500 mt-1" id="tl-nguyengia-chu">Bằng chữ: —</p></div><div><label class="tl-label">Hao mòn lũy kế (VNĐ)</label><input class="tl-input" id="tl-haomon" type="text" autocomplete="off" placeholder="Nhập số tiền"><p class="text-xs italic text-slate-500 mt-1" id="tl-haomon-chu">Bằng chữ: —</p></div><div><label class="tl-label">Giá trị còn lại (VNĐ)</label><input class="tl-input" id="tl-conlai" type="text" readonly placeholder="Tự tính"><p class="text-xs italic text-slate-500 mt-1" id="tl-conlai-chu">Bằng chữ: —</p></div></div>
+      <div><label class="tl-label">Kết luận của Ban thanh lý</label><textarea class="tl-input" id="tl-ketluan" rows="3"></textarea></div>
+      <div class="tl-section">Kết quả thanh lý</div>
+      <div class="grid grid-cols-2 gap-3"><div><label class="tl-label">Chi phí thanh lý (VNĐ)</label><input class="tl-input" id="tl-chiphi" type="text" autocomplete="off" placeholder="0"><p class="text-xs italic text-slate-500 mt-1" id="tl-chiphi-chu">Bằng chữ: —</p></div><div><label class="tl-label">Giá trị thu hồi (VNĐ)</label><input class="tl-input" id="tl-thuhoi" type="text" autocomplete="off" placeholder="0"><p class="text-xs italic text-slate-500 mt-1" id="tl-thuhoi-chu">Bằng chữ: —</p></div></div>
+      <div><label class="tl-label">Ngày ghi giảm sổ TSCĐ</label><input class="tl-input" id="tl-ngayghigiam" type="date"></div>
+      <div class="tl-section">Người ký</div>
+      <div class="grid grid-cols-2 gap-3"><div><label class="tl-label">Trưởng ban thanh lý</label><input class="tl-input" id="tl-ky-truongban"></div><div><label class="tl-label">Giám đốc</label><input class="tl-input" id="tl-ky-giamdoc"></div><div><label class="tl-label">Kế toán trưởng</label><input class="tl-input" id="tl-ky-ketoan"></div></div>
+    </form>
+    <div class="mt-5 pt-4 border-t border-slate-200 grid grid-cols-2 gap-2"><button type="button" onclick="exportExcelThanhLy()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs py-2.5 px-3 rounded-lg"><i class="fa-solid fa-file-excel mr-1"></i>Xuất Excel</button><button type="button" onclick="exportWordThanhLy()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs py-2.5 px-3 rounded-lg"><i class="fa-solid fa-file-word mr-1"></i>Xuất Word</button><button type="button" onclick="printVoucher('printable-voucher-thanhly')" class="col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs py-3 px-3 rounded-lg"><i class="fa-solid fa-print mr-2"></i>In biên bản (A4)</button></div>
+  </div>
+  <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 flex flex-col items-center overflow-x-auto"><div class="w-full flex justify-between items-center mb-4 no-print border-b border-slate-100 pb-3"><span class="text-xs font-bold uppercase tracking-wider text-orange-900 bg-orange-50 px-3 py-1 rounded-full"><i class="fa-solid fa-eye mr-1"></i>Xem trước biên bản</span><button onclick="switchView('home')" class="text-xs text-indigo-600 hover:underline">Về Trang chủ</button></div>
+  <div id="printable-voucher-thanhly" class="printable-area w-full max-w-[210mm] p-6 border border-slate-200 shadow-md rounded-lg">
+   <table style="width:100%;margin-bottom:18px"><tr><td style="width:58%;vertical-align:top"><b id="tlp-donvi">Đơn vị: Công ty TNHH Thời trang DB</b><div id="tlp-bophan">Bộ phận: ………………</div></td><td style="text-align:right;vertical-align:top"><b>Mẫu số 02 - TSCĐ</b><div style="font-size:10pt;font-style:italic">(Kèm theo Thông tư số 99/2025/TT-BTC)</div><div>Số: <span id="tlp-so">BBTL001</span></div><div>Nợ: <span id="tlp-no">……</span></div><div>Có: <span id="tlp-co">……</span></div></td></tr></table>
+   <div style="text-align:center;margin:18px 0"><h2 style="font-size:18pt;font-weight:bold">BIÊN BẢN THANH LÝ TÀI SẢN CỐ ĐỊNH</h2><div id="tlp-ngay" style="font-style:italic">Ngày … tháng … năm …</div></div>
+   <p>Căn cứ Quyết định số <span id="tlp-quyetdinh">……………</span> ngày <span id="tlp-ngayqd">…/…/……</span> của <span id="tlp-coquanqd">……………</span> về việc thanh lý tài sản cố định.</p>
+   <p style="font-weight:bold;margin-top:12px">I. Ban thanh lý TSCĐ gồm:</p><div id="tlp-members"></div>
+   <p style="font-weight:bold;margin-top:12px">II. Tiến hành thanh lý TSCĐ:</p>
+   <div class="tl-line"><span class="tl-key">Tên, ký mã hiệu, quy cách (cấp hạng) TSCĐ</span><span class="tl-val" id="tlp-tenta"></span></div><div class="tl-line"><span class="tl-key">Số hiệu TSCĐ/Mã TSCĐ</span><span class="tl-val" id="tlp-mata"></span></div><div class="tl-line"><span class="tl-key">Năm sản xuất</span><span class="tl-val" id="tlp-namsx"></span></div><div class="tl-line"><span class="tl-key">Năm đưa vào sử dụng</span><span class="tl-val" id="tlp-namsd"></span><span>Số thẻ TSCĐ:</span><span class="tl-val" id="tlp-sothe"></span></div><div class="tl-line"><span class="tl-key">Nguyên giá TSCĐ</span><span class="tl-val" id="tlp-nguyengia"></span></div><div class="tl-line"><span class="tl-key">Giá trị hao mòn đã trích đến thời điểm thanh lý</span><span class="tl-val" id="tlp-haomon"></span></div><div class="tl-line"><span class="tl-key">Giá trị còn lại của TSCĐ</span><span class="tl-val" id="tlp-conlai"></span></div>
+   <p style="font-weight:bold;margin-top:14px">III. Kết luận của Ban thanh lý TSCĐ:</p><p id="tlp-ketluan" style="min-height:35px;white-space:pre-wrap;border-bottom:1px dotted #555"></p><div style="text-align:right;margin-top:12px;font-style:italic"><span id="tlp-ngaytruongban">Ngày … tháng … năm …</span></div><div style="display:flex;justify-content:flex-end;margin-top:8px"><div class="tl-signbox" style="width:33.333%;text-align:center"><b>TRƯỞNG BAN THANH LÝ</b><div><i>(Ký, họ tên)</i></div><div class="tl-signspace"></div><b id="tlp-ky-truongban"></b></div></div>
+   <p style="font-weight:bold;margin-top:16px">IV. Kết quả thanh lý TSCĐ:</p><div class="tl-line"><span class="tl-key">Chi phí thanh lý TSCĐ</span><span class="tl-val" id="tlp-chiphi"></span></div><div style="margin-left:10px;font-style:italic">(Viết bằng chữ: <span id="tlp-chiphi-chu">—</span>)</div><div class="tl-line"><span class="tl-key">Giá trị thu hồi</span><span class="tl-val" id="tlp-thuhoi"></span></div><div style="margin-left:10px;font-style:italic">(Viết bằng chữ: <span id="tlp-thuhoi-chu">—</span>)</div><div class="tl-line"><span class="tl-key">Đã ghi giảm sổ TSCĐ ngày</span><span class="tl-val" id="tlp-ngayghigiam"></span></div>
+   <div class="tl-sign" style="grid-template-columns:repeat(2,minmax(0,1fr));justify-content:space-between"><div class="tl-signbox"><b>GIÁM ĐỐC</b><div><i>(Ký, họ tên, đóng dấu)</i></div><div class="tl-signspace"></div><b id="tlp-ky-giamdoc"></b></div><div class="tl-signbox"><b>KẾ TOÁN TRƯỞNG</b><div><i>(Ký, họ tên)</i></div><div class="tl-signspace"></div><b id="tlp-ky-ketoan"></b></div></div>
+  </div></div>`;
+  main.appendChild(view);
+  const cards=Array.from(document.querySelector('#view-home').children).find(el=>el.classList.contains('grid')&&el.classList.contains('lg:grid-cols-4'));
+  if(cards){const c=document.createElement('div');c.className='bg-white p-5 rounded-2xl shadow-sm border border-slate-200 cursor-pointer hover:border-orange-400 hover:shadow-md transition';c.onclick=()=>switchView('thanhly');c.innerHTML='<div class="flex items-center justify-between"><div><p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Biên bản thanh lý</p><h3 class="text-xl font-bold text-orange-600 mt-1">Mẫu 02-TSCĐ</h3></div><div class="bg-orange-50 text-orange-600 p-3 rounded-xl text-xl"><i class="fa-solid fa-file-signature"></i></div></div><p class="text-xs text-slate-400 mt-2">Lập, xem trước, xuất file và in biên bản thanh lý tài sản cố định</p>';cards.appendChild(c);}
+  const oldSwitchView=window.switchView;
+  window.switchView=function(name){if(name!=='thanhly')view.classList.add('hidden');if(name==='thanhly'){['home','thu','chi','nhapkho','xuatkho'].forEach(v=>{const el=document.getElementById('view-'+v);if(el)el.classList.add('hidden');const b=document.getElementById('nav-btn-'+v);if(b)b.className='px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center bg-indigo-950 text-indigo-200 border border-indigo-700 hover:bg-indigo-850';});view.classList.remove('hidden');const b=document.getElementById('nav-btn-thanhly');if(b)b.className='px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center bg-orange-600 text-white shadow';window.scrollTo({top:0,behavior:'smooth'});return;}if(oldSwitchView)oldSwitchView(name);};
+  const ids=['donvi','bophan','so','ngay','no','co','quyetdinh','ngayqd','coquanqd','tenta','mata','namsx','namsd','sothe','nguyengia','haomon','conlai','ketluan','chiphi','thuhoi','ngayghigiam','ky-truongban','ky-giamdoc','ky-ketoan'];
+  const dateFmt=v=>{if(!v)return '…/…/……';const [y,m,d]=v.split('-');return `${d} tháng ${m} năm ${y}`};
+  
+  // Sửa hàm lấy số chuẩn xác từ chuỗi nhập có định dạng dấu chấm ngăn cách hàng nghìn
+  const num=id=>{const val=document.getElementById(id)?.value||'';return parseInt(val.replace(/\D/g,''),10)||0;};
+  const money=n=>Math.max(0,Math.round(n||0)).toLocaleString('vi-VN')+' đồng';
+  
+  function update(){
+    const gia=num('tl-nguyengia'),hao=num('tl-haomon'),conlai=Math.max(0,gia-hao);
+    document.getElementById('tl-conlai').value=conlai ? conlai.toLocaleString('vi-VN') : '';
+    
+    ['nguyengia','haomon','conlai','chiphi','thuhoi'].forEach(id=>{
+        const n=id==='conlai'?conlai:num('tl-'+id);
+        const w=moneyWords(n);
+        const target=document.getElementById('tl-'+id+'-chu');
+        if(target)target.textContent='Bằng chữ: '+w;
+    });
+    
+    ids.forEach(id=>{
+        let el=document.getElementById('tlp-'+id);if(!el)return;
+        let v=document.getElementById('tl-'+id).value; 
+        if(['ngay','ngayqd','ngayghigiam'].includes(id)) v=dateFmt(v); 
+        if(['nguyengia','haomon','conlai','chiphi','thuhoi'].includes(id)) {
+            let n = id==='conlai' ? conlai : num('tl-'+id);
+            v = n ? money(n) : '…………';
+        }
+        el.textContent=v||'…………';
+    });
+    
+    document.getElementById('tlp-ngaytruongban').textContent=document.getElementById('tl-ngay').value?'Ngày '+dateFmt(document.getElementById('tl-ngay').value):'Ngày … tháng … năm …';
+    document.getElementById('tlp-members').innerHTML=[1,2,3].map(n=>{const ten=document.getElementById('tl-tv'+n+'-ten').value||'………………',cv=document.getElementById('tl-tv'+n+'-cv').value||'…………',dd=document.getElementById('tl-tv'+n+'-dd').value||'…………';return `<p>Ông/Bà: ${esc(ten)} &nbsp; Chức vụ: ${esc(cv)} &nbsp; Đại diện: ${esc(dd)} &nbsp; ${n===1?'Trưởng ban':'Ủy viên'}</p>`}).join('');
+    
+    ['chiphi','thuhoi'].forEach(id=>{
+        const words=moneyWords(num('tl-'+id));
+        const chiphiChuEl = document.getElementById('tl-'+id+'-chu');
+        if(chiphiChuEl) chiphiChuEl.textContent='Bằng chữ: '+words;
+        const targetP = document.getElementById('tlp-'+id+'-chu');
+        if(targetP) targetP.textContent=words;
+    });
+  }
+  
+  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function moneyWords(n){n=Math.max(0,Math.floor(Number(n)||0));if(typeof window.docSoThanhChu==='function')return window.docSoThanhChu(n);return n.toLocaleString('vi-VN')+' đồng chẵn.';}
+  
+  ids.forEach(id=>{const el=document.getElementById('tl-'+id);if(el){el.addEventListener('input',update);el.addEventListener('change',update);}});
+  [1,2,3].forEach(n=>['ten','cv','dd'].forEach(k=>document.getElementById(`tl-tv${n}-${k}`).addEventListener('input',update)));
+  
+  // Xử lý định dạng tiền tệ động khi nhập các ô số tiền
+  ['nguyengia','haomon','chiphi','thuhoi'].forEach(id=>{
+      const inputEl = document.getElementById('tl-'+id);
+      if(inputEl){
+          inputEl.addEventListener('input', e => {
+              let raw = e.target.value.replace(/\D/g, '');
+              let val = parseInt(raw, 10);
+              e.target.value = isNaN(val) || val === 0 ? '' : val.toLocaleString('vi-VN');
+              update();
+          });
+      }
+  });
+
+  window.resetThanhLy=function(){document.getElementById('form-thanhly').reset();document.getElementById('tl-so').value='BBTL001';update();};
+  window.exportExcelThanhLy=function(){update();const rows=[['Đơn vị',document.getElementById('tl-donvi').value],['Bộ phận',document.getElementById('tl-bophan').value],['Mẫu số','02 - TSCĐ'],['BIÊN BẢN THANH LÝ TÀI SẢN CỐ ĐỊNH'],['Số biên bản',document.getElementById('tl-so').value],['Ngày lập',document.getElementById('tl-ngay').value],['Tài khoản Nợ',document.getElementById('tl-no').value],['Tài khoản Có',document.getElementById('tl-co').value],['Quyết định số',document.getElementById('tl-quyetdinh').value],['Ngày quyết định',document.getElementById('tl-ngayqd').value],['Cơ quan ban hành',document.getElementById('tl-coquanqd').value],['Ban thanh lý'],...([1,2,3].map(n=>['Thành viên '+n,document.getElementById('tl-tv'+n+'-ten').value,document.getElementById('tl-tv'+n+'-cv').value,document.getElementById('tl-tv'+n+'-dd').value])),['Tên TSCĐ',document.getElementById('tl-tenta').value],['Mã TSCĐ',document.getElementById('tl-mata').value],['Năm sản xuất',document.getElementById('tl-namsx').value],['Năm đưa vào sử dụng',document.getElementById('tl-namsd').value],['Số thẻ TSCĐ',document.getElementById('tl-sothe').value],['Nguyên giá',num('tl-nguyengia')],['Hao mòn lũy kế',num('tl-haomon')],['Giá trị còn lại',Math.max(0,num('tl-nguyengia')-num('tl-haomon'))],['Kết luận',document.getElementById('tl-ketluan').value],['Chi phí thanh lý',num('tl-chiphi')],['Chi phí bằng chữ',moneyWords(num('tl-chiphi'))],['Giá trị thu hồi',num('tl-thuhoi')],['Giá trị thu hồi bằng chữ',moneyWords(num('tl-thuhoi'))],['Ngày ghi giảm',document.getElementById('tl-ngayghigiam').value],['Trưởng ban thanh lý',document.getElementById('tl-ky-truongban').value],['Giám đốc',document.getElementById('tl-ky-giamdoc').value],['Kế toán trưởng',document.getElementById('tl-ky-ketoan').value]];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'BienBanThanhLy');XLSX.writeFile(wb,`BienBanThanhLy_${document.getElementById('tl-so').value||'TSCĐ'}.xlsx`);};
+  window.exportWordThanhLy=function(){update();const html=`<html><head><meta charset="utf-8"><style>body{font-family:'Times New Roman';font-size:12pt}table{width:100%}.tl-line{display:flex;margin:6px 0}.tl-key{min-width:230px}.tl-val{flex:1;border-bottom:1px dotted #333}.tl-sign{display:flex;justify-content:space-around;text-align:center;margin-top:24px}</style></head><body>${document.getElementById('printable-voucher-thanhly').innerHTML}</body></html>`;const blob=htmlDocx.asBlob(html),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`BienBanThanhLy_${document.getElementById('tl-so').value||'TSCD'}.docx`;a.click();URL.revokeObjectURL(a.href);};
+  const today=new Date();document.getElementById('tl-ngay').value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;update();
+})();
+</script>
 </body>
 </html>
